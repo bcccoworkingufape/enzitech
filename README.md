@@ -44,13 +44,6 @@ $ yarn test
 ```bash
 $ yarn test:e2e
 ```
-
-## Apple Review
-
-No .env do projeto no campo IOS_VERSION deve se igual ao valor mandado pelo Mobile do IOS na rota `/ios/review/:version`, logo para desabilitar a revisão da versão basta apenas colocar um valor de uma versão que não foi lançada.
-Ex: versão do app IOS 1.2.1, para desabilitar a revisão basta colocar no .env a versão 1.3.0
-
-
 ## Gerando Migrations
 
 As migrations são geradas automaticamente a partir da modelagem em `domain/models/*`.

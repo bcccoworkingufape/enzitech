@@ -1,0 +1,33 @@
+{
+  "bail": true,
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": "./src",
+  "testEnvironment": "node",
+  "testRegex": ".spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "globals": {
+    "ts-jest": {
+      "__APP__": ""
+    }
+  },
+  "coverageDirectory": "../coverage",
+  "collectCoverage": true,
+  "coverageReporters": [
+    "json-summary",
+    "lcov",
+    "text"
+  ],
+  "modulePathIgnorePatterns": ["<rootDir>/dist"],
+  "coveragePathIgnorePatterns": [
+    "node_modules",
+    "dist",
+    "src/infrastructure/database/migrations",
+    "test"
+  ]
+}

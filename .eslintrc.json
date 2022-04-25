@@ -1,0 +1,49 @@
+{
+  "env": {
+    "es2021": true,
+    "node": true,
+    "jest": true
+  },
+  "root": true,
+  "extends": [
+    "airbnb-base",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module",
+    "project": "tsconfig.json"
+  },
+  "settings": {
+    "import/core-modules": ["node-modules"]
+  },
+  "plugins": ["@typescript-eslint/eslint-plugin"],
+  "rules": {
+    "@typescript-eslint/interface-name-prefix": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "import/no-extraneous-dependencies": "off",
+    "import/prefer-default-export": "off",
+    "class-methods-use-this": "off",
+    "import/no-unresolved": "off",
+    "no-empty": "off",
+    "no-useless-constructor": "off",
+    "no-param-reassign": "off",
+    "no-restricted-syntax": "off",
+    "no-await-in-loop": "off",
+    "no-shadow": "off",
+    "no-plusplus": [2, { "allowForLoopAfterthoughts": true }],
+    "no-underscore-dangle": "off",
+    "dot-notation": "off",
+    "prettier/prettier": "off",
+    "@typescript-eslint/semi": ["error", "always", {
+      "omitLastInOneLineBlock": false
+    }],
+    "@typescript-eslint/explicit-module-boundary-types": ["error", {
+      "allowArgumentsExplicitlyTypedAsAny": true
+    }]
+  }
+}

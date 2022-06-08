@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { DatabaseModule } from '../infrastructure/ioc/database.module';
 import { ProcessModule } from '@/infrastructure/ioc/process.module';
 import { EnzymeModule } from '@/infrastructure/ioc/enzyme.module';
+import { ExperimentModule } from '@/infrastructure/ioc/experiment.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EnzymeModule } from '@/infrastructure/ioc/enzyme.module';
     DatabaseModule,
     ProcessModule,
     EnzymeModule,
+    ExperimentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

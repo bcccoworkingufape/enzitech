@@ -26,21 +26,13 @@ export class ProcessService {
     }
   }
 
-  // async list(filter: ListUserFilterDto): Promise<ListUserDto> {
-  //   this.logger.debug('list');
-  //   const { users, count } = await this.userRepository.list({
-  //     email: filter.email,
-  //     name: filter.name,
-  //     role: filter.role,
-  //     page: filter.page ?? 1,
-  //     ordering: filter.ordering ?? 'ASC',
-  //     orderBy: filter.orderBy,
-  //     limit: filter.limit ?? 10,
-  //     initialDate: filter.initialDate,
-  //     finalDate: filter.finalDate,
-  //   });
-  //   return new ListUserDto({ users: users.map(u => new UserDto(u)), count });
-  // }
+  async findByIds(ids: string[]): Promise<Process[]> {
+    try {
+      return this.processRepository.findByIds(ids);
+    } catch(err) {
+      throw new BadRequestException('Erro ao pesquisar Tratamentos');
+    }
+  }
 
   async delete(id: string): Promise<boolean> {
     this.logger.debug('delete');

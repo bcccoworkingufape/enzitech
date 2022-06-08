@@ -6,6 +6,7 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -28,15 +29,13 @@ export class Process {
   @Expose()
   description: string;
 
-  @ManyToOne(() => Experiment, {
+  @ManyToMany(() => Experiment, experiment => experiment.processes, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
-    nullable: true,
+    nullable: false,
   })
-  @JoinColumn({ name: 'experiment_id', referencedColumnName: 'id' })
-  @Index()
   @Expose()
-  experiment?: Experiment | null;
+  experiments: Experiment[];
 
   @CreateDateColumn({ name: 'createdAt' })
   @Expose()

@@ -1,5 +1,5 @@
 import { Expose, plainToClass } from 'class-transformer';
-import { IsDecimal, IsString } from 'class-validator';
+import { IsDecimal, IsEnum, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { EnzymeType } from '@/presentation/dtos/enzyme/enums/enzyme-type.enum';
 import { ExperimentEnzyme } from './experiment-enzyme.entity';
 
 @Entity({ name: 'enzyme', orderBy: { id: 'ASC' } })
@@ -30,6 +31,11 @@ export class Enzyme {
   @IsDecimal()
   @Expose()
   variableB: number;
+
+  @Column({ type: 'enum', enum: EnzymeType })
+  @IsEnum(EnzymeType, { message: 'Tipo da enzima' })
+  @Expose()
+  type: EnzymeType;
 
   @OneToMany(() => ExperimentEnzyme, experimentEnzyme => experimentEnzyme.enzyme)
   experimentEnzymes: ExperimentEnzyme[];

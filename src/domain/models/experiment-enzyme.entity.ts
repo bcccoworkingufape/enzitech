@@ -4,7 +4,7 @@ import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from 'typeor
 import { Experiment } from './experiment.entity';
 import { Enzyme } from './enzyme.entity';
 
-@Entity({ name: 'exoeriments_enzymes', orderBy: { id: 'ASC' } })
+@Entity({ name: 'experiments_enzymes', orderBy: { id: 'ASC' } })
 export class ExperimentEnzyme {
   @PrimaryGeneratedColumn('uuid')
   @Expose()

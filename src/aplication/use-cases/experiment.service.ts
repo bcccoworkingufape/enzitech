@@ -7,6 +7,10 @@ import { ExperimentEnzymeService } from './experiment-enzyme.service';
 import { Experiment } from '@/domain/models/experiment.entity';
 import { UserService } from './user.service';
 import { ProcessService } from './process.service';
+import { ListExperimentDto } from '@/presentation/dtos/experiment/list-experiment.dto';
+import { BaseExperimentDto } from '@/presentation/dtos/experiment/base-experiment.dto';
+import { PaginationDto } from '@/presentation/dtos/shared/pagination.dto';
+import { ListExperimentFilterDto } from '@/presentation/dtos/experiment/list-experiment-filter.dto';
 
 
 @Injectable()
@@ -48,21 +52,20 @@ export class ExperimentService {
     }
   }
 
-  // async list(filter: ListUserFilterDto): Promise<ListUserDto> {
-  //   this.logger.debug('list');
-  //   const { users, count } = await this.userRepository.list({
-  //     email: filter.email,
-  //     name: filter.name,
-  //     role: filter.role,
-  //     page: filter.page ?? 1,
-  //     ordering: filter.ordering ?? 'ASC',
-  //     orderBy: filter.orderBy,
-  //     limit: filter.limit ?? 10,
-  //     initialDate: filter.initialDate,
-  //     finalDate: filter.finalDate,
-  //   });
-  //   return new ListUserDto({ users: users.map(u => new UserDto(u)), count });
-  // }
+  async list(filter: ListExperimentFilterDto, userId: string): Promise<ListExperimentDto> {
+    this.logger.debug('list');
+
+    const { experiments, count } = await this.experimentRepository.list({
+      page: filter.page ?? 1,
+      ordering: filter.ordering ?? 'ASC',
+      orderBy: filter.orderBy,
+      limit: filter.limit ?? 10,
+      finished: filter.finished ?? false,
+      userId
+    });
+
+    return new ListExperimentDto({ experiments: experiments.map(experiment => new BaseExperimentDto(experiment)) });
+  }
 
   async delete(id: string): Promise<boolean> {
     this.logger.debug('delete');

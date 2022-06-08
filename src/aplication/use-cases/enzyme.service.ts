@@ -26,6 +26,17 @@ export class EnzymeService {
     }
   }
 
+  async findById(id: string): Promise<Enzyme> {
+    this.logger.debug('findById');
+    console.log(id);
+    const enzyme = await this.enzymeRepository.findOne({ where: { id } });
+    
+    if(!enzyme){
+      throw new BadRequestException('Enzyme not found');
+    }
+    return enzyme;
+  }
+
   async list(): Promise<Enzyme[]> {
     this.logger.debug('list');
     return this.enzymeRepository.find();

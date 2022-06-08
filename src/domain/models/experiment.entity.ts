@@ -1,11 +1,13 @@
 import { Expose, plainToClass } from 'class-transformer';
-import { IsEmail, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsDecimal, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -37,6 +39,11 @@ export class Experiment {
   @Expose()
   repetitions: number;
 
+  @Column({ type: 'decimal', default: 0.00 })
+  @IsNumber()
+  @Expose()
+  progress: number;
+
   @CreateDateColumn({ name: 'createdAt' })
   @Expose()
   createdAt: Date;
@@ -52,7 +59,17 @@ export class Experiment {
   @OneToMany(() => ExperimentEnzyme, experimentEnzyme => experimentEnzyme.experiment)
   experimentEnzymes: ExperimentEnzyme[];
 
-  @OneToMany(() => Process, process => process.experiment)
+  @ManyToMany(() => Process, process => process.experiments, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    nullable: true,
+  })
+  @JoinTable({
+    name: 'experiments_processes',
+    joinColumn: { name: 'experimentId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'processId', referencedColumnName: 'id' },
+  })
+  @Expose()
   processes: Process[];
 
   @ManyToOne(() => User, {

@@ -33,6 +33,7 @@ import { ExperimentService } from '@/aplication/use-cases/experiment.service';
 import { SessionInfo } from '../dtos/auth-dto/interfaces/session-info.interface';
 import { ListExperimentDto } from '../dtos/experiment/list-experiment.dto';
 import { ListExperimentFilterDto } from '../dtos/experiment/list-experiment-filter.dto';
+import { BaseExperimentDto } from '../dtos/experiment/base-experiment.dto';
 
 @ApiTags('experiments')
 @ApiBearerAuth()
@@ -54,7 +55,7 @@ export class ExperimentController {
   async create(
     @Body() body: any, 
     @Req() request: { request: Request; user: SessionInfo }
-    ): Promise<Experiment> {
+    ): Promise<BaseExperimentDto> {
     return this.experimentService.create(body, request.user.id);
   }
 

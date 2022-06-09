@@ -26,7 +26,6 @@ export class ExperimentEnzymeService {
   async create(data: CreateExperimentEnzymeDto, experiment: Experiment): Promise<ExperimentEnzyme> {
     this.logger.debug('create');
     try {
-      console.log(experiment);
       const enzyme = await this.enzymeService.findById(data.enzyme);
       let {variableA, variableB} = data;
       if(!variableA || !variableB) {
@@ -49,7 +48,6 @@ export class ExperimentEnzymeService {
   }
 
   async bulkCreate(data: CreateExperimentEnzymeDto[], experiment: Experiment): Promise<void> {
-    console.log(data);
     const calls = data.map(experimentEnzy => (this.create(experimentEnzy, experiment)));
 
     await Promise.all(calls);

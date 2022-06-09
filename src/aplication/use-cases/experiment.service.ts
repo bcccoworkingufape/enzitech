@@ -27,9 +27,8 @@ export class ExperimentService {
 
   ) {}
 
-  async create(data: CreateExperimentDto, userId: string): Promise<Experiment> {
+  async create(data: CreateExperimentDto, userId: string): Promise<BaseExperimentDto> {
     this.logger.debug('create');
-    console.log(data.experimentsEnzymes);
     try {
       const user = await this.userService.get(userId);
       const processes = await this.processService.findByIds(data.processes);
@@ -43,12 +42,10 @@ export class ExperimentService {
       const experimentCreated = await this.experimentRepository.save(experiment);
 
       await this.experimentEnzymeService.bulkCreate(data.experimentsEnzymes, experimentCreated);
-
-      return experimentCreated;
-    } catch (err) {
-      console.log(err);
-      throw new BadRequestException('Erro ao cadastrar experimento');
       
+      return new BaseExperimentDto({...experimentCreated});
+    } catch (err) {
+      throw new BadRequestException('Erro ao cadastrar experimento');
     }
   }
 

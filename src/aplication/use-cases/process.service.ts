@@ -34,6 +34,14 @@ export class ProcessService {
     }
   }
 
+  async findByUser(userId: string): Promise<Process[]> {
+    try {
+      return this.processRepository.getUserProcess(userId);
+    } catch(err) {
+      throw new BadRequestException('Erro ao pesquisar Tratamentos');
+    }
+  }
+
   async delete(id: string): Promise<boolean> {
     this.logger.debug('delete');
     return !!(await this.processRepository.delete(id)).affected;

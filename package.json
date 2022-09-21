@@ -30,6 +30,8 @@
   "dependencies": {
     "@commitlint/cli": "^12.1.1",
     "@commitlint/config-conventional": "^12.1.1",
+    "@nestjs-query/core": "^0.30.0",
+    "@nestjs-query/query-typeorm": "^0.30.0",
     "@nestjs/common": "^7.6.15",
     "@nestjs/config": "^0.6.3",
     "@nestjs/core": "^7.6.15",

@@ -4,10 +4,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRole } from '../../presentation/dtos/user/enums/user-role.enum';
+import { Experiment } from './experiment.entity';
+import { Process } from './process.entity';
 
 @Entity({ name: 'users', orderBy: { name: 'ASC' } })
 export class User {
@@ -32,13 +35,21 @@ export class User {
   passwordHash: string;
 
   @Column({ type: 'varchar', default: UserRole.User  })
-  @IsEnum(UserRole, { message: 'Tipo do usuário deve ser Admin, User ou Hotmart' })
+  @IsEnum(UserRole, { message: 'Tipo do usuário deve ser Admin, User' })
   @Expose()
   role: UserRole;
 
   @Column({ type: 'varchar', nullable: true })
   @Expose()
   recoverToken?: string | null;
+
+  @OneToMany(() => Experiment, experiment => experiment.user)
+  @Expose()
+  experiments: Experiment[];
+
+  @OneToMany(() => Process, process => process.user)
+  @Expose()
+  processes: Process[];
 
   @CreateDateColumn({ name: 'createdAt' })
   @Expose()

@@ -64,6 +64,22 @@ export class ExperimentService {
     return new ListExperimentDto({ experiments: experiments.map(experiment => new BaseExperimentDto(experiment)) });
   }
 
+  async get(filter: ListExperimentFilterDto, userId: string): Promise<ListExperimentDto> {
+    this.logger.debug('list');
+
+    const { experiments, count } = await this.experimentRepository.list({
+      page: filter.page ?? 1,
+      ordering: filter.ordering ?? 'ASC',
+      orderBy: filter.orderBy,
+      limit: filter.limit ?? 10,
+      finished: filter.finished ?? false,
+      userId
+    });
+
+    return new ListExperimentDto({ experiments: experiments.map(experiment => new BaseExperimentDto(experiment)) });
+  }
+
+
   async delete(id: string): Promise<boolean> {
     this.logger.debug('delete');
     return !!(await this.experimentRepository.delete(id)).affected;

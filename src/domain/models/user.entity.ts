@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { UserRole } from '../../presentation/dtos/user/enums/user-role.enum';
 import { Experiment } from './experiment.entity';
+import { Process } from './process.entity';
 
 @Entity({ name: 'users', orderBy: { name: 'ASC' } })
 export class User {
@@ -45,6 +46,10 @@ export class User {
   @OneToMany(() => Experiment, experiment => experiment.user)
   @Expose()
   experiments: Experiment[];
+
+  @OneToMany(() => Process, process => process.user)
+  @Expose()
+  processes: Process[];
 
   @CreateDateColumn({ name: 'createdAt' })
   @Expose()

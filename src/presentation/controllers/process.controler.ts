@@ -47,8 +47,11 @@ export class ProcessController {
   })
   @Roles('Admin', 'User')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async create(@Body() body: CreateProcessDto): Promise<Process> {
-    return this.processService.create(body);
+  async create(
+    @Body() body: CreateProcessDto,
+    @Req() request: { request: Request; user: SessionInfo }
+  ): Promise<Process> {
+    return this.processService.create(body, request.user.id);
   }
 
   @Get()

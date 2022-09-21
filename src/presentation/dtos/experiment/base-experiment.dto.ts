@@ -6,6 +6,16 @@ import { CreateExperimentEnzymeDto } from './experiment-enzyme.dto';
 export class BaseExperimentDto {
   @ApiProperty({
     type: String,
+    description: 'ID of experiment',
+    required: true,
+    example: 'd6a109fc-f634-4ce6-a573-385f9b6bdb4f',
+  })
+  @IsString()
+  @Expose()
+  readonly id: string;
+
+  @ApiProperty({
+    type: String,
     description: 'Name of experiment',
     required: true,
     example: 'Experimento 1',

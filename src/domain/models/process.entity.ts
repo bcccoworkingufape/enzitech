@@ -3,6 +3,7 @@ import { IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -12,6 +13,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Experiment } from './experiment.entity';
+import { User } from './user.entity';
 
 @Entity({ name: 'process', orderBy: { id: 'ASC' } })
 export class Process {
@@ -44,6 +46,20 @@ export class Process {
   @UpdateDateColumn({ name: 'updatedAt' })
   @Expose()
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deletedAt' })
+  @Expose()
+  deletedAt?: Date;
+
+  @ManyToOne(() => User, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+  @Index()
+  @Expose()
+  user: User;
 
   constructor(process: Process) {
     Object.assign(this, plainToClass(Process, process, { excludeExtraneousValues: true }));

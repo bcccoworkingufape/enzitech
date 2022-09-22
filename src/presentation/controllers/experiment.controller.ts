@@ -34,6 +34,7 @@ import { SessionInfo } from '../dtos/auth-dto/interfaces/session-info.interface'
 import { ListExperimentDto } from '../dtos/experiment/list-experiment.dto';
 import { ListExperimentFilterDto } from '../dtos/experiment/list-experiment-filter.dto';
 import { BaseExperimentDto } from '../dtos/experiment/base-experiment.dto';
+import { ExperimentDto } from '../dtos/experiment/experiment.dto';
 
 @ApiTags('experiments')
 @ApiBearerAuth()
@@ -71,6 +72,21 @@ export class ExperimentController {
     @Req() request: { request: Request; user: SessionInfo }
     ): Promise<ListExperimentDto> {
     return this.experimentService.list(filter, request.user.id);
+  }
+
+
+  @Get(':id')
+  @ApiResponse({
+    type: ExperimentDto,
+    status: HttpStatus.CREATED,
+  })
+  @Roles('Admin', 'User')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async get(
+    @Param('id') processId: string,
+    @Req() request: { request: Request; user: SessionInfo }
+    ): Promise<ExperimentDto> {
+    return this.experimentService.get(processId, request.user.id);
   }
 
   @Delete(':id')

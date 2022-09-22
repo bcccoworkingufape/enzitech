@@ -11,6 +11,7 @@ import { ListExperimentDto } from '@/presentation/dtos/experiment/list-experimen
 import { BaseExperimentDto } from '@/presentation/dtos/experiment/base-experiment.dto';
 import { PaginationDto } from '@/presentation/dtos/shared/pagination.dto';
 import { ListExperimentFilterDto } from '@/presentation/dtos/experiment/list-experiment-filter.dto';
+import { ExperimentDto } from '@/presentation/dtos/experiment/experiment.dto';
 
 
 @Injectable()
@@ -64,19 +65,24 @@ export class ExperimentService {
     return new ListExperimentDto({ experiments: experiments.map(experiment => new BaseExperimentDto(experiment)) });
   }
 
-  async get(filter: ListExperimentFilterDto, userId: string): Promise<ListExperimentDto> {
-    this.logger.debug('list');
-
-    const { experiments, count } = await this.experimentRepository.list({
-      page: filter.page ?? 1,
-      ordering: filter.ordering ?? 'ASC',
-      orderBy: filter.orderBy,
-      limit: filter.limit ?? 10,
-      finished: filter.finished ?? false,
-      userId
-    });
-
-    return new ListExperimentDto({ experiments: experiments.map(experiment => new BaseExperimentDto(experiment)) });
+  async get(processId: string, userId: string): Promise<ExperimentDto> {
+    this.logger.debug('get');
+    try {
+      const experiment: any = await this.experimentRepository.findOneOrFail({
+        where: { 
+          id: processId,
+          user: { 
+            id: userId
+          }
+        },
+        relations: ['processes', 'experimentEnzymes']
+      });
+  
+      return new ExperimentDto(experiment, experiment.experimentEnzymes, experiment.processes);
+    } catch (error) {
+      throw new BadRequestException("Erro ao buscar experimento");
+    }
+    
   }
 
 

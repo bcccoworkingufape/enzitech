@@ -6,7 +6,7 @@ import { ExperimentRepository } from '@/infrastructure/database/repositories/exp
 import { CreateExperimentDto } from '@/presentation/dtos/experiment/create-experiment.dto';
 import { ExperimentEnzymeRepository } from '@/infrastructure/database/repositories/experiment-enzyme.repository';
 import { User } from '@/domain/models/user.entity';
-import { CreateExperimentEnzymeDto } from '@/presentation/dtos/experiment/experiment-enzyme.dto';
+import { CreateExperimentEnzymeDto } from '@/presentation/dtos/experiment/create-experiment-enzyme.dto';
 import { Experiment } from '@/domain/models/experiment.entity';
 import { ExperimentEnzyme } from '@/domain/models/experiment-enzyme.entity';
 import { EnzymeService } from './enzyme.service';

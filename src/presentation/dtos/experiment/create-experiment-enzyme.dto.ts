@@ -1,38 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, plainToClass } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { EnzymeType } from '../enzyme/enums/enzyme-type.enum';
+import { IsEmail, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class ExperimentEnzymeDto {
+export class CreateExperimentEnzymeDto {
   @ApiProperty({
     type: String,
-    description: 'ID of enzyme experiment',
+    description: 'Name of process',
     required: true,
     example: '25a243db-1008-4268-a08b-efb7429f6bfa',
   })
   @IsString()
   @Expose()
-  readonly id: string;
-
-  @ApiProperty({
-    type: String,
-    description: 'Name of enzyme',
-    required: true,
-    example: 'Enzyme Z',
-  })
-  @IsString()
-  @Expose()
-  readonly name: string;
-
-  @ApiProperty({
-    type: String,
-    description: 'Type of enzyme',
-    example: EnzymeType.Aryl,
-    required: true,
-  })
-  @IsEnum(EnzymeType)
-  @Expose()
-  readonly type: EnzymeType;
+  readonly enzyme: string;
 
   @ApiProperty({
     type: Number,
@@ -43,7 +22,7 @@ export class ExperimentEnzymeDto {
   @IsOptional()
   @IsNumber()
   @Expose()
-  readonly variableA: number;
+  readonly variableA?: number;
 
   @ApiProperty({
     type: Number,
@@ -54,7 +33,7 @@ export class ExperimentEnzymeDto {
   @IsOptional()
   @IsNumber()
   @Expose()
-  readonly variableB: number;
+  readonly variableB?: number;
 
   @ApiProperty({
     type: Number,
@@ -97,7 +76,7 @@ export class ExperimentEnzymeDto {
   readonly size: number;
 
 
-  constructor(obj: ExperimentEnzymeDto) {
-    Object.assign(this, plainToClass(ExperimentEnzymeDto, obj, { excludeExtraneousValues: true }));
+  constructor(obj: CreateExperimentEnzymeDto) {
+    Object.assign(this, plainToClass(CreateExperimentEnzymeDto, obj, { excludeExtraneousValues: true }));
   }
 }

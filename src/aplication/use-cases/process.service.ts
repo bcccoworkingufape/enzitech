@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@nestjs-query/query-typeorm';
-
 import { ProcessRepository } from '@/infrastructure/database/repositories/process.repository';
 import { CreateProcessDto } from '@/presentation/dtos/process/create-process.dto';
 import { Process } from '@/domain/models/process.entity';

@@ -40,7 +40,7 @@
     "@nestjs/platform-express": "^7.6.15",
     "@nestjs/schedule": "^1.0.1",
     "@nestjs/swagger": "^4.8.0",
-    "@nestjs/typeorm": "^9.0.1",
+    "@nestjs/typeorm": "^7.1.5",
     "@types/lodash": "^4.14.171",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
@@ -60,7 +60,7 @@
     "rxjs": "^6.6.6",
     "swagger-ui-express": "^4.1.6",
     "twilio": "^3.62.0",
-    "typeorm": "^0.3.10",
+    "typeorm": "^0.2.32",
     "typeorm-seeding": "^1.6.1"
   },
   "devDependencies": {
@@ -98,7 +98,7 @@
     "ts-loader": "^8.0.18",
     "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^4.2.3"
+    "typescript": "~4.7.4"
   },
   "jest": {
     "moduleFileExtensions": [

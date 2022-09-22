@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, plainToClass } from 'class-transformer';
 import { IsArray, IsEmail, IsInt, IsString } from 'class-validator';
-import { CreateExperimentEnzymeDto } from './experiment-enzyme.dto';
+import { CreateExperimentEnzymeDto } from './create-experiment-enzyme.dto';
 
 export class CreateExperimentDto {
   @ApiProperty({

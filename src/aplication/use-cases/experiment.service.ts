@@ -46,7 +46,8 @@ export class ExperimentService {
       
       return new BaseExperimentDto({...experimentCreated});
     } catch (err) {
-      throw new BadRequestException('Erro ao cadastrar experimento');
+      console.log(err);
+      throw new BadRequestException(err.message ?? 'Erro ao cadastrar experimento');
     }
   }
 

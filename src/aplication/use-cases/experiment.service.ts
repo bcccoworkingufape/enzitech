@@ -46,7 +46,6 @@ export class ExperimentService {
       
       return new BaseExperimentDto({...experimentCreated});
     } catch (err) {
-      console.log(err);
       throw new BadRequestException(err.message ?? 'Erro ao cadastrar experimento');
     }
   }
@@ -63,7 +62,7 @@ export class ExperimentService {
       userId
     });
 
-    return new ListExperimentDto({ experiments: experiments.map(experiment => new BaseExperimentDto(experiment)) });
+    return new ListExperimentDto({ experiments: experiments.map(experiment => new BaseExperimentDto(experiment)), total: count });
   }
 
   async get(processId: string, userId: string): Promise<ExperimentDto> {

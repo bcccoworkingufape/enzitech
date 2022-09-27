@@ -12,6 +12,9 @@ import { BaseExperimentDto } from '@/presentation/dtos/experiment/base-experimen
 import { PaginationDto } from '@/presentation/dtos/shared/pagination.dto';
 import { ListExperimentFilterDto } from '@/presentation/dtos/experiment/list-experiment-filter.dto';
 import { ExperimentDto } from '@/presentation/dtos/experiment/experiment.dto';
+import { CalculateExperimentEnzymeDto } from '@/presentation/dtos/experiment/calculate-experiment-calculation.dto';
+import { ResultExperimentEnzymeProcessCalculateDto } from '@/presentation/dtos/experiment/result-experiment-enzyme-process-calculation.dto';
+import { EnzymeType } from '@/presentation/dtos/enzyme/enums/enzyme-type.enum';
 
 
 @Injectable()
@@ -65,12 +68,12 @@ export class ExperimentService {
     return new ListExperimentDto({ experiments: experiments.map(experiment => new BaseExperimentDto(experiment)), total: count });
   }
 
-  async get(processId: string, userId: string): Promise<ExperimentDto> {
+  async get(experimentId: string, userId: string): Promise<ExperimentDto> {
     this.logger.debug('get');
     try {
       const experiment: any = await this.experimentRepository.findOneOrFail({
         where: { 
-          id: processId,
+          id: experimentId,
           user: { 
             id: userId
           }
@@ -80,7 +83,8 @@ export class ExperimentService {
   
       return new ExperimentDto(experiment, experiment.experimentEnzymes, experiment.processes);
     } catch (error) {
-      throw new BadRequestException("Erro ao buscar experimento");
+      
+      throw new BadRequestException(error.message ?? "Erro ao buscar experimento");
     }
     
   }
@@ -89,6 +93,29 @@ export class ExperimentService {
   async delete(id: string): Promise<boolean> {
     this.logger.debug('delete');
     return !!(await this.experimentRepository.delete(id)).affected;
+  }
+
+  async calculate(data: CalculateExperimentEnzymeDto, experimentId: string): Promise<any> {
+    this.logger.debug('create');
+    try {
+      const experiment = await this.experimentRepository.findExperiment(data.enzyme, data.process, experimentId);
+      const { enzymes, processes } = experiment;
+      const [enzyme] = enzymes;
+      const [process] = processes;
+
+      switch (enzyme.type) {
+        case EnzymeType.FosfataseAcida:
+          
+          break;
+      
+        default:
+          break;
+      }
+
+      
+    } catch (err) {
+      throw new BadRequestException(err.message ?? 'Erro ao cadastrar experimento');
+    }
   }
 
 }

@@ -1,6 +1,7 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { Experiment } from '@/domain/models/experiment.entity';
 import { ListExperimentsParam } from '@/presentation/dtos/experiment/interfaces/list-experiments-param.interface';
+import { ExperimentDto } from '@/presentation/dtos/experiment/experiment.dto';
 
 @EntityRepository(Experiment)
 export class ExperimentRepository extends Repository<Experiment> {
@@ -26,5 +27,20 @@ export class ExperimentRepository extends Repository<Experiment> {
       experiments,
       count,
     };
+  }
+
+  async findExperiment(enzymeId: string, processId: string, experimentId: string): Promise<ExperimentDto> {
+    const experiment = await this.createQueryBuilder('experiments')
+    .leftJoinAndSelect('experiments.experimentEnzymes', 'experimentEnzymes', 
+      'experimentEnzymes.enzyme.id = :enzymeId', {
+        enzymeId
+      }
+    )
+    .leftJoinAndSelect('experiments.processes', 'processes', 
+    'processes.id = :processId', { processId})
+    .where('experiments.id = :experimentId', { experimentId})
+    .getOneOrFail();
+
+    return new ExperimentDto(experiment, experiment.experimentEnzymes, experiment.processes);
   }
 }

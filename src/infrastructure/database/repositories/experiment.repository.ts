@@ -7,7 +7,7 @@ export class ExperimentRepository extends Repository<Experiment> {
 
   async list(param: ListExperimentsParam): Promise<{ experiments: Experiment[]; count: number }> {
     let query = await this.createQueryBuilder('experiments')
-    .leftJoin('experiments.user', 'user', 'user.id = :userId', { userId: param.userId });
+    .where('experiments.user.id = :userId', { userId: param.userId });
 
     if (param.finished) {
       query = query.where(`experiments."finishedAt" IS NOT NULL`);

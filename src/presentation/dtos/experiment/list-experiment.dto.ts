@@ -13,6 +13,16 @@ export class ListExperimentDto {
   @Expose()
   readonly experiments: BaseExperimentDto[];
 
+  @ApiProperty({
+    type: Number,
+    description: 'Total of experiments',
+    example: 10,
+    required: true,
+  })
+  @IsArray()
+  @Expose()
+  readonly total: number;
+
 
   constructor(obj: ListExperimentDto) {
     Object.assign(this, plainToClass(ListExperimentDto, obj, { excludeExtraneousValues: true }));

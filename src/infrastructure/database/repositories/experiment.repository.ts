@@ -36,11 +36,11 @@ export class ExperimentRepository extends Repository<Experiment> {
         enzymeId
       }
     )
+    .leftJoinAndSelect('experimentEnzymes.enzyme', 'enzyme')
     .leftJoinAndSelect('experiments.processes', 'processes', 
     'processes.id = :processId', { processId})
     .where('experiments.id = :experimentId', { experimentId})
     .getOneOrFail();
-
     return new ExperimentDto(experiment, experiment.experimentEnzymes, experiment.processes);
   }
 }

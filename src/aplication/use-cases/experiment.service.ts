@@ -2,19 +2,16 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExperimentRepository } from '@/infrastructure/database/repositories/experiment.repository';
 import { CreateExperimentDto } from '@/presentation/dtos/experiment/create-experiment.dto';
-import { User } from '@/domain/models/user.entity';
 import { ExperimentEnzymeService } from './experiment-enzyme.service';
-import { Experiment } from '@/domain/models/experiment.entity';
 import { UserService } from './user.service';
 import { ProcessService } from './process.service';
 import { ListExperimentDto } from '@/presentation/dtos/experiment/list-experiment.dto';
 import { BaseExperimentDto } from '@/presentation/dtos/experiment/base-experiment.dto';
-import { PaginationDto } from '@/presentation/dtos/shared/pagination.dto';
 import { ListExperimentFilterDto } from '@/presentation/dtos/experiment/list-experiment-filter.dto';
 import { ExperimentDto } from '@/presentation/dtos/experiment/experiment.dto';
 import { CalculateExperimentEnzymeDto } from '@/presentation/dtos/experiment/calculate-experiment-calculation.dto';
 import { ResultExperimentEnzymeProcessCalculateDto } from '@/presentation/dtos/experiment/result-experiment-enzyme-process-calculation.dto';
-import { EnzymeType } from '@/presentation/dtos/enzyme/enums/enzyme-type.enum';
+import { CalculateExperimentService } from './calculate-experiment.service';
 
 
 @Injectable()
@@ -27,6 +24,7 @@ export class ExperimentService {
     private readonly experimentEnzymeService: ExperimentEnzymeService,
     private readonly userService: UserService, 
     private readonly processService: ProcessService, 
+    private readonly calculateExperimentService: CalculateExperimentService,
 
 
   ) {}
@@ -95,25 +93,22 @@ export class ExperimentService {
     return !!(await this.experimentRepository.delete(id)).affected;
   }
 
-  async calculate(data: CalculateExperimentEnzymeDto, experimentId: string): Promise<any> {
+  async calculate(data: CalculateExperimentEnzymeDto, experimentId: string): Promise<ResultExperimentEnzymeProcessCalculateDto> {
     this.logger.debug('create');
     try {
       const experiment = await this.experimentRepository.findExperiment(data.enzyme, data.process, experimentId);
-      const { enzymes, processes } = experiment;
-      const [enzyme] = enzymes;
-      const [process] = processes;
+      const [enzyme] = experiment.enzymes;
 
-      switch (enzyme.type) {
-        case EnzymeType.FosfataseAcida:
-          
-          break;
-      
-        default:
-          break;
+      if(data.experimentData.length !== experiment.repetitions) {
+        throw new Error("Número de repetições inválidas");
+        
       }
+
+      return this.calculateExperimentService.calculate(enzyme, data.experimentData);
 
       
     } catch (err) {
+      this.logger.log('Erro:', err.message);
       throw new BadRequestException(err.message ?? 'Erro ao cadastrar experimento');
     }
   }

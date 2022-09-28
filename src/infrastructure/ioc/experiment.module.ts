@@ -9,6 +9,7 @@ import { ExperimentEnzymeService } from '@/aplication/use-cases/experiment-enzym
 import { ExperimentEnzymeRepository } from '../database/repositories/experiment-enzyme.repository';
 import { EnzymeModule } from './enzyme.module';
 import { ProcessModule } from './process.module';
+import { CalculateExperimentService } from '@/aplication/use-cases/calculate-experiment.service';
 
 
 @Module({
@@ -23,7 +24,7 @@ import { ProcessModule } from './process.module';
     ProcessModule,
   ],
   controllers: [ExperimentController],
-  providers: [ExperimentService, ExperimentEnzymeService],
-  exports: [ExperimentService],
+  providers: [ExperimentService, ExperimentEnzymeService, CalculateExperimentService],
+  exports: [ExperimentService, CalculateExperimentService],
 })
 export class ExperimentModule {}

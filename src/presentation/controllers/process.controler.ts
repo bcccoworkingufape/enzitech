@@ -28,6 +28,7 @@ import { ProcessService } from '@/aplication/use-cases/process.service';
 import { CreateProcessDto } from '../dtos/process/create-process.dto';
 import { Process } from '@/domain/models/process.entity';
 import { SessionInfo } from '../dtos/auth-dto/interfaces/session-info.interface';
+import { ProcessDto } from '../dtos/process/process.dto';
 
 @ApiTags('processes')
 @ApiBearerAuth()
@@ -50,7 +51,7 @@ export class ProcessController {
   async create(
     @Body() body: CreateProcessDto,
     @Req() request: { request: Request; user: SessionInfo }
-  ): Promise<Process> {
+  ): Promise<ProcessDto> {
     return this.processService.create(body, request.user.id);
   }
 

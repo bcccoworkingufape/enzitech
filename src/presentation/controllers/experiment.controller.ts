@@ -35,6 +35,8 @@ import { ListExperimentDto } from '../dtos/experiment/list-experiment.dto';
 import { ListExperimentFilterDto } from '../dtos/experiment/list-experiment-filter.dto';
 import { BaseExperimentDto } from '../dtos/experiment/base-experiment.dto';
 import { ExperimentDto } from '../dtos/experiment/experiment.dto';
+import { CalculateExperimentEnzymeDto } from '../dtos/experiment/calculate-experiment-calculation.dto';
+import { ResultExperimentEnzymeProcessCalculateDto } from '../dtos/experiment/result-experiment-enzyme-process-calculation.dto';
 
 @ApiTags('experiments')
 @ApiBearerAuth()
@@ -60,6 +62,26 @@ export class ExperimentController {
     return this.experimentService.create(body, request.user.id);
   }
 
+  
+  @Post('calculate/:experiment')
+  @ApiBody({
+    description: 'User information to be inserted.',
+    type: CalculateExperimentEnzymeDto,
+  })
+  // @ApiResponse({
+  //   type: Enzyme,
+  //   status: HttpStatus.CREATED,
+  // })
+  @Roles('Admin', 'User')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async calculate(
+    @Body() body: CalculateExperimentEnzymeDto,
+    @Param('experiment') experimentId: string
+    ): Promise<ResultExperimentEnzymeProcessCalculateDto> {
+    return this.experimentService.calculate(body, experimentId);
+
+  }
+
   @Get()
   @ApiResponse({
     type: ListExperimentDto,
@@ -83,10 +105,10 @@ export class ExperimentController {
   @Roles('Admin', 'User')
   @UseGuards(JwtAuthGuard, RolesGuard)
   async get(
-    @Param('id') processId: string,
+    @Param('id') experimentId: string,
     @Req() request: { request: Request; user: SessionInfo }
     ): Promise<ExperimentDto> {
-    return this.experimentService.get(processId, request.user.id);
+    return this.experimentService.get(experimentId, request.user.id);
   }
 
   @Delete(':id')

@@ -5,6 +5,7 @@ import { ProcessRepository } from '@/infrastructure/database/repositories/proces
 import { CreateProcessDto } from '@/presentation/dtos/process/create-process.dto';
 import { Process } from '@/domain/models/process.entity';
 import { UserService } from './user.service';
+import { ProcessDto } from '@/presentation/dtos/process/process.dto';
 
 
 
@@ -21,13 +22,13 @@ export class ProcessService extends TypeOrmQueryService<Process>{
 
   }
 
-  async create(data: CreateProcessDto, userId: string): Promise<Process> {
+  async create(data: CreateProcessDto, userId: string): Promise<ProcessDto> {
     this.logger.debug('create');
     try {
       const user = await this.userService.get(userId);
       const process = this.processRepository.create({...data, user});
-
-      return this.processRepository.save(process);
+      const savedProcess = await this.processRepository.save(process);
+      return new ProcessDto(savedProcess);
     } catch (err) {
       throw new BadRequestException('Erro ao cadastrar tratamento');
       

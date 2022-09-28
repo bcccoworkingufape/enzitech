@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, plainToClass } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
 import { CreateExperimentDataDto } from './create-experiment-data.dto';
 
 export class CalculateExperimentEnzymeDto {
@@ -29,8 +29,7 @@ export class CalculateExperimentEnzymeDto {
     description: 'Data to calculate the result of experiment',
     required: true,
   })
-  @IsOptional()
-  @IsNumber()
+  @IsArray()
   @Expose()
   readonly experimentData: CreateExperimentDataDto[];
 

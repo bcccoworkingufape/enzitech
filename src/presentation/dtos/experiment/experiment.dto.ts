@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, plainToClass } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { AnyARecord } from 'dns';
+import { Expose } from 'class-transformer';
 import { ExperimentEnzyme } from '@/domain/models/experiment-enzyme.entity';
 import { ProcessDto } from '../process/process.dto';
 import { BaseExperimentDto } from './base-experiment.dto';
@@ -28,7 +26,6 @@ export class ExperimentDto extends BaseExperimentDto {
 
   constructor(obj: any, experimentEnzymes: ExperimentEnzyme[], processes: Process[]) {
     super(obj);
-
     this.enzymes = experimentEnzymes.map(experimentEnzyme => new ExperimentEnzymeDto({
       ...experimentEnzyme,
       name: experimentEnzyme.enzyme.name,

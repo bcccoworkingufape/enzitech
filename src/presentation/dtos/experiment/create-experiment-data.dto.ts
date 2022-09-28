@@ -4,24 +4,24 @@ import { IsNumber } from 'class-validator';
 
 export class CreateExperimentDataDto {
   @ApiProperty({
-    type: String,
+    type: Number,
     description: 'Sample of experiment',
     required: true,
-    example: 0.566,
+    example: 0.405,
   })
   @IsNumber()
   @Expose()
   readonly sample: number;
 
   @ApiProperty({
-    type: String,
+    type: Number,
     description: 'White sample of experiment',
     required: true,
-    example: 0.486,
+    example: 0.39,
   })
   @IsNumber()
   @Expose()
-  readonly whiteSample: string;
+  readonly whiteSample: number;
 
   constructor(obj: CreateExperimentDataDto) {
     Object.assign(this, plainToClass(CreateExperimentDataDto, obj, { excludeExtraneousValues: true }));

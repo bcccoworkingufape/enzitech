@@ -68,10 +68,10 @@ export class ExperimentController {
     description: 'User information to be inserted.',
     type: CalculateExperimentEnzymeDto,
   })
-  // @ApiResponse({
-  //   type: Enzyme,
-  //   status: HttpStatus.CREATED,
-  // })
+  @ApiResponse({
+    type: ResultExperimentEnzymeProcessCalculateDto,
+    status: HttpStatus.CREATED,
+  })
   @Roles('Admin', 'User')
   @UseGuards(JwtAuthGuard, RolesGuard)
   async calculate(

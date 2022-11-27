@@ -37,6 +37,7 @@ import { BaseExperimentDto } from '../dtos/experiment/base-experiment.dto';
 import { ExperimentDto } from '../dtos/experiment/experiment.dto';
 import { CalculateExperimentEnzymeDto } from '../dtos/experiment/calculate-experiment-calculation.dto';
 import { ResultExperimentEnzymeProcessCalculateDto } from '../dtos/experiment/result-experiment-enzyme-process-calculation.dto';
+import { SaveResultExperimentDto } from '../dtos/experiment/save-result.dto';
 
 @ApiTags('experiments')
 @ApiBearerAuth()
@@ -79,7 +80,23 @@ export class ExperimentController {
     @Param('experiment') experimentId: string
     ): Promise<ResultExperimentEnzymeProcessCalculateDto> {
     return this.experimentService.calculate(body, experimentId);
+  }
 
+  @Post('save-result/:experiment')
+  @ApiBody({
+    description: 'Result to be inserted.',
+    type: SaveResultExperimentDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+  })
+  @Roles('Admin', 'User')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async saveResult(
+    @Body() body: CalculateExperimentEnzymeDto,
+    @Param('experiment') experimentId: string
+    ): Promise<ResultExperimentEnzymeProcessCalculateDto> {
+    return this.experimentService.calculate(body, experimentId);
   }
 
   @Get()

@@ -98,10 +98,15 @@ export class ExperimentService {
     try {
       const experiment = await this.experimentRepository.findExperiment(data.enzyme, data.process, experimentId);
       const [enzyme] = experiment.enzymes;
+      
 
       if(data.experimentData.length !== experiment.repetitions) {
         throw new Error("Número de repetições inválidas");
         
+      }
+      if(!enzyme) {
+        throw new Error("Enzima não encontrada");
+
       }
 
       return this.calculateExperimentService.calculate(enzyme, data.experimentData);

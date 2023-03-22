@@ -18,6 +18,7 @@ const dbConfig = {
   migrationsRun: environment === 'test',
   dropSchema: environment === 'test',
   connectTimeoutMS: environment === 'test' ? 6000 : 0,
+  synchronize: true,
 };
 
 module.exports = [

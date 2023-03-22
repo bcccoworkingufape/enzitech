@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadGatewayException, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { compare } from 'bcrypt';
+import { randomBytes } from 'crypto';
 import { AccessTokenAndUserDto } from '../../presentation/dtos/auth-dto/login-and-register-response.dto';
 import { Env } from '../../shared/helpers/env.helper';
 import { UserDto } from '../../presentation/dtos/user/user.dto';
@@ -17,6 +18,8 @@ import {
 import { ChangePasswordDto } from '../../presentation/dtos/auth-dto/change-password.dto';
 import { UserRepository } from '@/infrastructure/database/repositories/user.repository';
 import { ExternalUserToken } from '@/shared/interfaces/external-subscription/external-user-token.interface';
+import { UpdateUserDto } from '@/presentation/dtos/user/update-user.dto';
+import { MailService } from './mail.service';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +28,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
     @InjectRepository(AuthSessionRepository)
     private readonly authSessionRepository: AuthSessionRepository,
     @InjectRepository(UserRepository)
@@ -54,19 +58,21 @@ export class AuthService {
   }
 
   async sendRecoverPasswordEmail(email: string): Promise<void> {
-    // this.logger.debug('sendRecoverPasswordEmail');
-    // const user = await this.userService.findBy({ email });
-    // const recoverToken = randomBytes(32).toString('hex');
-    // const updatedUser = await this.userService.update(user.id, new UpdateUserDto({ recoverToken }));
-    // try {
-    //   await this.mailGateway.resetPasswordMail(
-    //     email,
-    //     updatedUser.name as string,
-    //     updatedUser.recoverToken as string,
-    //   );
-    // } catch (e) {
-    //   throw new BadGatewayException('Error trying send email');
-    // }
+    this.logger.debug('sendRecoverPasswordEmail');
+
+    const user = await this.userService.findBy({ email });
+    const recoverToken = randomBytes(32).toString('hex');
+    const updatedUser = await this.userService.update(user.id, new UpdateUserDto({ recoverToken }));
+
+    try {
+      await this.mailService.resetPasswordMail(
+        email,
+        updatedUser.name as string,
+        updatedUser.recoverToken as string,
+      );
+    } catch (err) {
+      throw new BadGatewayException('Erro ao tentar recuperar a senha, tente novamente mais tarde!');
+    }
   }
 
   private async createSession(

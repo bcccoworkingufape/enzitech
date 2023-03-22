@@ -27,12 +27,11 @@ export class SaveResultExperimentDto {
     type: [Number],
     description: 'Data to save result',
     required: true,
+    example: [49.25589, 50.1033]
   })
   @IsArray()
   @Expose()
   readonly results: number[];
-
-
 
   constructor(obj: SaveResultExperimentDto) {
     Object.assign(this, plainToClass(SaveResultExperimentDto, obj, { excludeExtraneousValues: true }));

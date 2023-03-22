@@ -11,6 +11,7 @@ import { UserRepository } from '../database/repositories/user.repository';
 import { AuthController } from '../../presentation/controllers/auth.controller';
 import { AuthService } from '../../aplication/use-cases/auth.service';
 import { AuthSessionRepository } from '../database/repositories/auth-session.repository';
+import { MailModule } from './mail.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AuthSessionRepository } from '../database/repositories/auth-session.rep
       signOptions: { expiresIn: Env.getString('JWT_EXPIRATION_TIME') },
     }),
     forwardRef(() => UserModule),
+    MailModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -33,6 +35,6 @@ import { AuthSessionRepository } from '../database/repositories/auth-session.rep
     RolesGuard,
     JwtAuthGuard,
   ],
-  exports: [AuthService],
+  exports: [AuthService, MailModule],
 })
 export class AuthModule {}

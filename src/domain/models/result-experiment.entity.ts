@@ -30,7 +30,7 @@ export class ResultExperiment {
   @JoinColumn({ name: 'experimentId' })
   experiment: Experiment;
 
-  @Column("int", { array: true, default: [] })
+  @Column("decimal", { array: true, default: [] })
   results: number[];
 
   @CreateDateColumn({ name: 'createdAt' })

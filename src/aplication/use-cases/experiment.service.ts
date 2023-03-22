@@ -10,9 +10,10 @@ import { BaseExperimentDto } from '@/presentation/dtos/experiment/base-experimen
 import { ListExperimentFilterDto } from '@/presentation/dtos/experiment/list-experiment-filter.dto';
 import { ExperimentDto } from '@/presentation/dtos/experiment/experiment.dto';
 import { CalculateExperimentEnzymeDto } from '@/presentation/dtos/experiment/calculate-experiment-calculation.dto';
+import { SaveResultExperimentDto } from '@/presentation/dtos/experiment/save-result-experiment.dto';
 import { ResultExperimentEnzymeProcessCalculateDto } from '@/presentation/dtos/experiment/result-experiment-enzyme-process-calculation.dto';
 import { CalculateExperimentService } from './calculate-experiment.service';
-
+import { ResultExperimentService } from './result-experiment.service';
 
 @Injectable()
 export class ExperimentService {
@@ -25,8 +26,7 @@ export class ExperimentService {
     private readonly userService: UserService, 
     private readonly processService: ProcessService, 
     private readonly calculateExperimentService: CalculateExperimentService,
-
-
+    private readonly resultExperimentService: ResultExperimentService,
   ) {}
 
   async create(data: CreateExperimentDto, userId: string): Promise<BaseExperimentDto> {
@@ -118,4 +118,14 @@ export class ExperimentService {
     }
   }
 
+  async saveResult(data: SaveResultExperimentDto, experimentId: string): Promise<any> {
+    this.logger.debug('create');
+    try {
+      const experiment = await this.experimentRepository.findOneOrFail(experimentId);
+      
+      return this.resultExperimentService.create(data, experiment);
+    } catch (err) {
+      throw new BadRequestException(err.message ?? 'Erro ao salvar o resultado do experimento');
+    }
+  }
 }

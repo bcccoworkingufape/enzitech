@@ -74,7 +74,11 @@ export class UserService {
 
   async findBy(criteria: Partial<User>): Promise<User> {
     this.logger.debug('findBy');
-    const user = await this.userRepository.findOne({where: {criteria}});
+
+    const user = await this.userRepository.findOne({ 
+      where: criteria
+    });
+
     if (!user) {
       throw new UserNotFoundException();
     }

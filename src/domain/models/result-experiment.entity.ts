@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { IsDecimal } from 'class-validator';
 import { Enzyme } from './enzyme.entity';
 import { Experiment } from './experiment.entity';
 import { Process } from './process.entity';
@@ -31,7 +32,13 @@ export class ResultExperiment {
   experiment: Experiment;
 
   @Column("decimal", { array: true, default: [] })
+  @Expose()
   results: number[];
+
+  @Column({ type: 'decimal' })
+  @IsDecimal()
+  @Expose()
+  average: number;
 
   @CreateDateColumn({ name: 'createdAt' })
   @Expose()
@@ -40,7 +47,6 @@ export class ResultExperiment {
   @UpdateDateColumn({ name: 'updatedAt' })
   @Expose()
   updatedAt: Date;
-
 
   constructor(resultExperiment: ResultExperiment) {
     Object.assign(this, plainToClass(ResultExperiment, resultExperiment, { excludeExtraneousValues: true }));

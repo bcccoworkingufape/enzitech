@@ -7,8 +7,6 @@ import { Process } from '@/domain/models/process.entity';
 import { UserService } from './user.service';
 import { ProcessDto } from '@/presentation/dtos/process/process.dto';
 
-
-
 @Injectable()
 export class ProcessService extends TypeOrmQueryService<Process>{
   private readonly logger = new Logger(ProcessService.name);
@@ -61,4 +59,16 @@ export class ProcessService extends TypeOrmQueryService<Process>{
     return !!(await this.processRepository.softDelete(id)).affected;
   }
 
+  async findById(id: string): Promise<Process> {
+    try {
+      return await this.processRepository.findOneOrFail({
+        where: { 
+          id
+        },
+      });
+
+    } catch(err) {
+      throw new BadRequestException('Erro ao pesquisar Tratamentos');
+    }
+  }
 }

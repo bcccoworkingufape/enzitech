@@ -35,6 +35,16 @@ export class ExperimentEnzymeDto {
   readonly type: EnzymeType;
 
   @ApiProperty({
+    type: String,
+    description: 'Formula of enzyme',
+    example: 'µg PNP g-1 solo h-1',
+    required: true,
+  })
+  @IsString()
+  @Expose()
+  readonly formula: string;
+
+  @ApiProperty({
     type: Number,
     description: 'Curve variable A',
     example: 0.452,

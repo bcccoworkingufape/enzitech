@@ -43,4 +43,16 @@ export class ExperimentRepository extends Repository<Experiment> {
     .getOneOrFail();
     return new ExperimentDto(experiment, experiment.experimentEnzymes, experiment.processes);
   }
+
+  async findEnzymesByExperiment(processId: string, experimentId: string): Promise<any> {
+    const result = await this
+      .createQueryBuilder('experiments')
+      .leftJoinAndSelect('experiments.experimentEnzymes', 'experimentEnzymes')
+      .leftJoinAndSelect('experimentEnzymes.enzyme', 'enzyme')
+      .leftJoinAndSelect('experiments.processes', 'processes', 'processes.id = :processId', { processId })
+      .where('experiments.id = :experimentId', { experimentId })
+      .getOneOrFail();
+
+    return result;
+  }
 }

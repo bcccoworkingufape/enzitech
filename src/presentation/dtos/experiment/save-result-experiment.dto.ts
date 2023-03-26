@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, plainToClass } from 'class-transformer';
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsString } from 'class-validator';
 
 export class SaveResultExperimentDto {
   @ApiProperty({
@@ -32,6 +32,16 @@ export class SaveResultExperimentDto {
   @IsArray()
   @Expose()
   readonly results: number[];
+
+  @ApiProperty({
+    type: Number,
+    description: 'Average of the calculation',
+    required: true,
+    example: 86.3309,
+  })
+  @IsNumber()
+  @Expose()
+  readonly average: number;
 
   constructor(obj: SaveResultExperimentDto) {
     Object.assign(this, plainToClass(SaveResultExperimentDto, obj, { excludeExtraneousValues: true }));

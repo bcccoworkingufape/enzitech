@@ -44,4 +44,15 @@ export class ResultExperimentService {
       }
     });
   }
+
+  async listResultsExperiment(experiment: Experiment): Promise<ResultExperiment[] | undefined> {
+    this.logger.debug('get');
+
+    return this.resultExperimentRepository.find({
+      where: {
+        experiment
+      },
+      relations: ['process', 'enzyme', 'experiment', 'experiment.experimentEnzymes']
+    });
+  }
 }

@@ -14,10 +14,10 @@ import { SaveResultExperimentDto } from '@/presentation/dtos/experiment/save-res
 import { ResultExperimentEnzymeProcessCalculateDto } from '@/presentation/dtos/experiment/result-experiment-enzyme-process-calculation.dto';
 import { CalculateExperimentService } from './calculate-experiment.service';
 import { ResultExperimentService } from './result-experiment.service';
-import { GetResultExperimentDto } from '@/presentation/dtos/experiment/get-result-experiment.dto';
 import { EnzymeService } from './enzyme.service';
 import { ResultExperiment } from '@/domain/models/result-experiment.entity';
 import { VerifyEnzymeDto } from '@/presentation/dtos/experiment/verify-enzyme.dto';
+import { ResultExperimentRepository } from '@/infrastructure/database/repositories/result-experiment.repository';
 
 @Injectable()
 export class ExperimentService {
@@ -25,6 +25,7 @@ export class ExperimentService {
 
   constructor(
     @InjectRepository(ExperimentRepository)
+    private readonly resultExperimentRepository: ResultExperimentRepository,
     private readonly experimentRepository: ExperimentRepository,
     private readonly experimentEnzymeService: ExperimentEnzymeService,
     private readonly userService: UserService, 
@@ -119,7 +120,7 @@ export class ExperimentService {
     }
   }
 
-  async verifyEnzymesResultSave(data: VerifyEnzymeDto, experimentId: string, ): Promise<any> {
+  async verifyEnzymes(data: VerifyEnzymeDto, experimentId: string, ): Promise<any> {
     this.logger.debug('get');
 
     try {
@@ -132,8 +133,8 @@ export class ExperimentService {
       await Promise.all(result.experimentEnzymes.map(async (experimentEnzyme: any) => {
         const enzyme = await this.resultExperimentService.findResultExperiment(process, experimentEnzyme.enzyme.id, experiment);
 
-        if (enzyme) {
-          enzymes.push(enzyme);
+        if (!enzyme) {
+          enzymes.push(experimentEnzyme.enzyme.id);
         }
       }));
 
@@ -147,25 +148,66 @@ export class ExperimentService {
     this.logger.debug('create');
 
     try {
-      const experiment = await this.experimentRepository.findOneOrFail(experimentId);
       const process = await this.processService.findById(data.process);
       const enzyme = await this.enzymeService.findById(data.enzyme);
+      const experiment = await this.experimentRepository.findOneOrFail(experimentId);
+      const result = await this.experimentRepository.findEnzymesByExperiment(process.id, experimentId);
 
-      return this.resultExperimentService.create(data.results, data.average, process, enzyme, experiment);
+      const resultExperimentSaved = await this.resultExperimentService.create(data.results, data.average, process, enzyme, experiment);
+
+      let totalEnzymesCalculateResultSave = 0;
+      const totalEnzymeExperiment = result.experimentEnzymes.length;
+
+      await Promise.all(result.experimentEnzymes.map(async (experimentEnzyme: any) => {
+        const enzyme = await this.resultExperimentService.findResultExperiment(process, experimentEnzyme.enzyme.id, experiment);
+
+        if (enzyme) {
+          totalEnzymesCalculateResultSave += 1;
+        }
+      }));
+
+      const progress = ((totalEnzymesCalculateResultSave / totalEnzymeExperiment) * 100) / 100;
+      experiment.progress = Number(progress.toFixed(2));
+
+      if (progress === 1) {
+        experiment.finishedAt = new Date();
+      }
+
+      await this.experimentRepository.save(experiment);
+
+      return resultExperimentSaved;
     } catch (err) {
       throw new BadRequestException(err.message ?? 'Erro ao salvar o resultado do experimento');
     }
   }
 
-  async getResult(data: GetResultExperimentDto, experimentId: string): Promise<any> {
+  async getTotalResultSave(experimentId: string): Promise<any> {
     this.logger.debug('get');
 
     try {
       const experiment = await this.experimentRepository.findOneOrFail(experimentId);
-      const process = await this.processService.findById(data.process);
-      const enzyme = await this.enzymeService.findById(data.enzyme);
-      
-      return await this.resultExperimentService.findResultExperiment(process, enzyme, experiment);
+      const listResultsExperiment = await this.resultExperimentService.listResultsExperiment(experiment);
+
+      const result: any[] = [];
+
+      if (listResultsExperiment?.length) {
+        listResultsExperiment.map((resultExperiment) => {
+          return result.push({
+            id: resultExperiment.id,
+            results: resultExperiment.results,
+            average: resultExperiment.average,
+            processName: resultExperiment.process.name,
+            enzymeName: resultExperiment.enzyme.name,
+            experiment: {
+              id: resultExperiment.experiment.id,
+              name: resultExperiment.experiment.name,
+              finishedAt: resultExperiment.experiment.finishedAt,
+            },
+          });
+        });
+      }
+
+      return { result };
     } catch (err) {
       throw new BadRequestException(err.message ?? 'Erro ao buscar o resultado do experimento');
     }

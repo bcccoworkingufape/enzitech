@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -19,15 +20,15 @@ export class ResultExperiment {
   @Expose()
   id: string;
 
-  @OneToOne(() => Process, { primary: true, cascade: true })
+  @ManyToOne(() => Process, { primary: true, cascade: true })
   @JoinColumn({ name: 'processId' })
   process: Process;
 
-  @OneToOne(() => Enzyme, { primary: true, cascade: true })
+  @ManyToOne(() => Enzyme, { primary: true, cascade: true })
   @JoinColumn({ name: 'enzymeId' })
   enzyme: Enzyme;
 
-  @OneToOne(() => Experiment, { primary: true, cascade: true })
+  @ManyToOne(() => Experiment, { primary: true, cascade: true })
   @JoinColumn({ name: 'experimentId' })
   experiment: Experiment;
 

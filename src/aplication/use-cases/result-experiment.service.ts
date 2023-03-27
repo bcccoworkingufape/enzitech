@@ -5,6 +5,7 @@ import { ResultExperiment } from '@/domain/models/result-experiment.entity';
 import { ResultExperimentRepository } from '@/infrastructure/database/repositories/result-experiment.repository';
 import { Process } from '@/domain/models/process.entity';
 import { Enzyme } from '@/domain/models/enzyme.entity';
+import { v4 } from 'uuid'
 
 @Injectable()
 export class ResultExperimentService {
@@ -27,7 +28,9 @@ export class ResultExperimentService {
         average,
       });
 
-      return this.resultExperimentRepository.save(resultExperiment);
+      const save = await this.resultExperimentRepository.save(resultExperiment);
+
+      return save;
     } catch (err) {
       throw new BadRequestException('Erro ao salvar o resultado do experimento');
     }

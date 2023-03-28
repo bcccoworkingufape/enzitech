@@ -58,7 +58,7 @@ export class EnzymeService {
         return 'µg PNP g-1 solo h-1';
       case EnzymeType.FosfataseAlcalina:
         return 'µg PNP g-1 solo h-1';
-      case EnzymeType.Betaglucosidade:
+      case EnzymeType.Betaglucosidase:
         return 'μg PNG g-1 de solo h-1';
       case EnzymeType.Aryl:
         return 'µg PNS g-1 solo h-1';

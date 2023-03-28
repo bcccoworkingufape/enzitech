@@ -105,7 +105,7 @@ export class ExperimentController {
     return this.experimentService.getTotalResultSave(experimentId);
   }
 
-  @Get('get-enzymes/:experiment')
+  @Post('get-enzymes/:experiment')
   @ApiResponse({
     status: HttpStatus.OK,
   })

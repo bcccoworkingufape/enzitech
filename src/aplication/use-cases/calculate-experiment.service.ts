@@ -14,8 +14,8 @@ export class CalculateExperimentService {
         return this.calculateFosfataseAcida(enzyme, data);
       case EnzymeType.FosfataseAlcalina:
         return this.calculateFosfataseAlcalina(enzyme, data);
-      case EnzymeType.Betaglucosidade:
-        return this.calculateBetaglucosidade(enzyme, data);
+      case EnzymeType.Betaglucosidase:
+        return this.calculateBetaglucosidase(enzyme, data);
       case EnzymeType.Aryl:
         return this.calculateAryl(enzyme, data);
       case EnzymeType.Urease:
@@ -37,7 +37,7 @@ export class CalculateExperimentService {
     const results = data.map(repetition => {
       const diferrenceSample = repetition.sample - repetition.whiteSample;
 
-      const slopeOfCurve = ((diferrenceSample - variableB) / variableA) * 10;
+      const slopeOfCurve = ((diferrenceSample - variableB) / variableA);
 
       const result = (slopeOfCurve * size) / (duration * weightGround * weightSample);
 
@@ -55,7 +55,7 @@ export class CalculateExperimentService {
     const results = data.map(repetition => {
       const diferrenceSample = repetition.sample - repetition.whiteSample;
 
-      const slopeOfCurve = ((diferrenceSample - variableB) / variableA) * 10;
+      const slopeOfCurve = ((diferrenceSample - variableB) / variableA);
 
       const result = (slopeOfCurve * size) / (duration * weightGround * weightSample);
 
@@ -67,13 +67,13 @@ export class CalculateExperimentService {
     return { results, average };
   }
 
-  calculateBetaglucosidade(enzyme: ExperimentEnzymeDto, data: CreateExperimentDataDto[]): ResultExperimentEnzymeProcessCalculateDto {
+  calculateBetaglucosidase(enzyme: ExperimentEnzymeDto, data: CreateExperimentDataDto[]): ResultExperimentEnzymeProcessCalculateDto {
     const { duration, variableA, variableB, weightGround, weightSample, size } = enzyme;
 
     const results = data.map(repetition => {
       const diferrenceSample = repetition.sample - repetition.whiteSample;
 
-      const slopeOfCurve = ((diferrenceSample - variableB) / variableA) * 10;
+      const slopeOfCurve = ((diferrenceSample - variableB) / variableA);
 
       const result = (slopeOfCurve * size) / (duration * weightGround * weightSample);
 
@@ -91,7 +91,7 @@ export class CalculateExperimentService {
     const results = data.map(repetition => {
       const diferrenceSample = repetition.sample - repetition.whiteSample;
 
-      const slopeOfCurve = ((diferrenceSample - variableB) / variableA) * 10;
+      const slopeOfCurve = ((diferrenceSample - variableB) / variableA);
 
       const result = (slopeOfCurve * size) / (duration * weightGround * weightSample);
 

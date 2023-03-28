@@ -12,6 +12,8 @@ export class ExperimentRepository extends Repository<Experiment> {
 
     if (param.finished) {
       query = query.where(`experiments."finishedAt" IS NOT NULL`);
+    } else {
+      query = query.where(`experiments."finishedAt" IS NULL`);
     }
 
     if (param.orderBy) {
@@ -50,6 +52,18 @@ export class ExperimentRepository extends Repository<Experiment> {
       .leftJoinAndSelect('experiments.experimentEnzymes', 'experimentEnzymes')
       .leftJoinAndSelect('experimentEnzymes.enzyme', 'enzyme')
       .leftJoinAndSelect('experiments.processes', 'processes', 'processes.id = :processId', { processId })
+      .where('experiments.id = :experimentId', { experimentId })
+      .getOneOrFail();
+
+    return result;
+  }
+
+  async findAllByExperiment(experimentId: string): Promise<any> {
+    const result = await this
+      .createQueryBuilder('experiments')
+      .leftJoinAndSelect('experiments.experimentEnzymes', 'experimentEnzymes')
+      .leftJoinAndSelect('experimentEnzymes.enzyme', 'enzyme')
+      .leftJoinAndSelect('experiments.processes', 'processes')
       .where('experiments.id = :experimentId', { experimentId })
       .getOneOrFail();
 

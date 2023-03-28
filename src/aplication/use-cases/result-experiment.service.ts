@@ -5,7 +5,6 @@ import { ResultExperiment } from '@/domain/models/result-experiment.entity';
 import { ResultExperimentRepository } from '@/infrastructure/database/repositories/result-experiment.repository';
 import { Process } from '@/domain/models/process.entity';
 import { Enzyme } from '@/domain/models/enzyme.entity';
-import { v4 } from 'uuid'
 
 @Injectable()
 export class ResultExperimentService {
@@ -56,6 +55,16 @@ export class ResultExperimentService {
         experiment
       },
       relations: ['process', 'enzyme', 'experiment', 'experiment.experimentEnzymes']
+    });
+  }
+
+  async countResultExperiment(experiment: Experiment): Promise<number> {
+    this.logger.debug('get');
+    
+    return this.resultExperimentRepository.count({
+      where: {
+        experiment
+      }
     });
   }
 }

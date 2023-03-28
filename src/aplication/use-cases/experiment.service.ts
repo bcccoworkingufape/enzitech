@@ -15,7 +15,6 @@ import { ResultExperimentEnzymeProcessCalculateDto } from '@/presentation/dtos/e
 import { CalculateExperimentService } from './calculate-experiment.service';
 import { ResultExperimentService } from './result-experiment.service';
 import { EnzymeService } from './enzyme.service';
-import { ResultExperiment } from '@/domain/models/result-experiment.entity';
 import { VerifyEnzymeDto } from '@/presentation/dtos/experiment/verify-enzyme.dto';
 import { ResultExperimentRepository } from '@/infrastructure/database/repositories/result-experiment.repository';
 
@@ -120,7 +119,7 @@ export class ExperimentService {
     }
   }
 
-  async verifyEnzymes(data: VerifyEnzymeDto, experimentId: string, ): Promise<any> {
+  async verifyEnzymes(data: VerifyEnzymeDto, experimentId: string): Promise<any> {
     this.logger.debug('get');
 
     try {
@@ -134,7 +133,18 @@ export class ExperimentService {
         const enzyme = await this.resultExperimentService.findResultExperiment(process, experimentEnzyme.enzyme.id, experiment);
 
         if (!enzyme) {
-          enzymes.push(experimentEnzyme.enzyme.id);
+          enzymes.push({
+            id: experimentEnzyme.enzyme.id,
+            name: experimentEnzyme.enzyme.name,
+            type: experimentEnzyme.enzyme.type,
+            formula: experimentEnzyme.enzyme.formula,
+            variableA: experimentEnzyme.variableA,
+            variableB: experimentEnzyme.variableB,
+            duration: experimentEnzyme.duration,
+            weightSample: experimentEnzyme.weightSample,
+            weightGround: experimentEnzyme.weightGround,
+            size: experimentEnzyme.size,
+          });
         }
       }));
 
@@ -144,7 +154,7 @@ export class ExperimentService {
     }
   }
 
-  async saveResult(data: SaveResultExperimentDto, experimentId: string): Promise<ResultExperiment> {
+  async saveResult(data: SaveResultExperimentDto, experimentId: string): Promise<any> {
     this.logger.debug('create');
 
     try {
@@ -153,20 +163,16 @@ export class ExperimentService {
       const experiment = await this.experimentRepository.findOneOrFail(experimentId);
       const result = await this.experimentRepository.findEnzymesByExperiment(process.id, experimentId);
 
-      const resultExperimentSaved = await this.resultExperimentService.create(data.results, data.average, process, enzyme, experiment);
+      await this.resultExperimentService.create(data.results, data.average, process, enzyme, experiment);
 
-      let totalEnzymesCalculateResultSave = 0;
+      const getExperiment = await this.experimentRepository.findAllByExperiment(experimentId);
+
+      const totalEnzymesCalculateResultSave = await this.resultExperimentService.countResultExperiment(experiment);
+      
       const totalEnzymeExperiment = result.experimentEnzymes.length;
+      const totalProcessesExperiment = getExperiment.processes.length;
+      const progress = ((totalEnzymesCalculateResultSave / (totalEnzymeExperiment * totalProcessesExperiment)) * 100) / 100;
 
-      await Promise.all(result.experimentEnzymes.map(async (experimentEnzyme: any) => {
-        const enzyme = await this.resultExperimentService.findResultExperiment(process, experimentEnzyme.enzyme.id, experiment);
-
-        if (enzyme) {
-          totalEnzymesCalculateResultSave += 1;
-        }
-      }));
-
-      const progress = ((totalEnzymesCalculateResultSave / totalEnzymeExperiment) * 100) / 100;
       experiment.progress = Number(progress.toFixed(2));
 
       if (progress === 1) {
@@ -175,7 +181,9 @@ export class ExperimentService {
 
       await this.experimentRepository.save(experiment);
 
-      return resultExperimentSaved;
+      const experimentUpdated = await this.experimentRepository.findAllByExperiment(experimentId);
+
+      return new ExperimentDto(experimentUpdated, experimentUpdated.experimentEnzymes, experimentUpdated.processes);
     } catch (err) {
       throw new BadRequestException(err.message ?? 'Erro ao salvar o resultado do experimento');
     }
@@ -201,6 +209,7 @@ export class ExperimentService {
             experiment: {
               id: resultExperiment.experiment.id,
               name: resultExperiment.experiment.name,
+              progress: resultExperiment.experiment.progress,
               finishedAt: resultExperiment.experiment.finishedAt,
             },
           });

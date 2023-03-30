@@ -5,7 +5,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -32,14 +31,30 @@ export class ResultExperiment {
   @JoinColumn({ name: 'experimentId' })
   experiment: Experiment;
 
-  @Column("decimal", { array: true, default: [] })
+  @Column('decimal')
+  @IsDecimal()
   @Expose()
-  results: number[];
+  result: number;
+
+  @Column('decimal')
+  @IsDecimal()
+  @Expose()
+  sample: number;
+
+  @Column('decimal')
+  @IsDecimal()
+  @Expose()
+  whiteSample: number;
 
   @Column({ type: 'decimal' })
   @IsDecimal()
   @Expose()
-  average: number;
+  differenceBetweenSamples: number;
+
+  @Column('decimal')
+  @IsDecimal()
+  @Expose()
+  curve: number;
 
   @CreateDateColumn({ name: 'createdAt' })
   @Expose()

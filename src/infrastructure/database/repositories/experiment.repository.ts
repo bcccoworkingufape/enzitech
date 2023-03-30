@@ -31,22 +31,22 @@ export class ExperimentRepository extends Repository<Experiment> {
     };
   }
 
-  async findExperiment(enzymeId: string, processId: string, experimentId: string): Promise<ExperimentDto> {
-    const experiment = await this.createQueryBuilder('experiments')
-    .leftJoinAndSelect('experiments.experimentEnzymes', 'experimentEnzymes', 
-      'experimentEnzymes.enzyme.id = :enzymeId', {
-        enzymeId
-      }
-    )
-    .leftJoinAndSelect('experimentEnzymes.enzyme', 'enzyme')
-    .leftJoinAndSelect('experiments.processes', 'processes', 
-    'processes.id = :processId', { processId})
-    .where('experiments.id = :experimentId', { experimentId})
-    .getOneOrFail();
+  async findExperimentByIdAndEnzymeIdAndProcessId(experimentId: string, enzymeId: string, processId: string): Promise<ExperimentDto> {
+    const experiment = await this
+      .createQueryBuilder('experiments')
+      .leftJoinAndSelect(
+        'experiments.experimentEnzymes', 'experimentEnzymes', 
+        'experimentEnzymes.enzyme.id = :enzymeId', { enzymeId }
+      )
+      .leftJoinAndSelect('experimentEnzymes.enzyme', 'enzyme')
+      .leftJoinAndSelect('experiments.processes', 'processes', 'processes.id = :processId', { processId })
+      .where('experiments.id = :experimentId', { experimentId })
+      .getOneOrFail();
+
     return new ExperimentDto(experiment, experiment.experimentEnzymes, experiment.processes);
   }
 
-  async findEnzymesByExperiment(processId: string, experimentId: string): Promise<any> {
+  async findExperimentByIdAndProcessId(experimentId: string, processId: string): Promise<any> {
     const result = await this
       .createQueryBuilder('experiments')
       .leftJoinAndSelect('experiments.experimentEnzymes', 'experimentEnzymes')
@@ -58,7 +58,7 @@ export class ExperimentRepository extends Repository<Experiment> {
     return result;
   }
 
-  async findAllByExperiment(experimentId: string): Promise<any> {
+  async findExperimentById(experimentId: string): Promise<any> {
     const result = await this
       .createQueryBuilder('experiments')
       .leftJoinAndSelect('experiments.experimentEnzymes', 'experimentEnzymes')

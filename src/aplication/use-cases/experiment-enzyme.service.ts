@@ -49,4 +49,37 @@ export class ExperimentEnzymeService {
     this.logger.debug('delete');
     return !!(await this.experimentEnzymeRepository.delete(id)).affected;
   }
+
+  async find(experiment: string, enzyme: string): Promise<ExperimentEnzyme> {
+    this.logger.debug('get');
+    
+    const experimentEnzyme = await this.experimentEnzymeRepository.findOne({
+      where: {
+        experiment,
+        enzyme
+      }
+    });
+
+    if(!experimentEnzyme){
+      throw new BadRequestException('Experiment Enzyme not found');
+    }
+
+    return experimentEnzyme;
+  }
+
+  async list(experiment: string): Promise<ExperimentEnzyme[]> {
+    this.logger.debug('get');
+    
+    const experimentEnzyme = await this.experimentEnzymeRepository.find({
+      where: {
+        experiment
+      }
+    });
+
+    if (!experimentEnzyme){
+      throw new BadRequestException('Experiment Enzyme not found');
+    }
+
+    return experimentEnzyme;
+  }
 }

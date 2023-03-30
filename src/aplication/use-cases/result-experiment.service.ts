@@ -5,6 +5,7 @@ import { ResultExperiment } from '@/domain/models/result-experiment.entity';
 import { ResultExperimentRepository } from '@/infrastructure/database/repositories/result-experiment.repository';
 import { Process } from '@/domain/models/process.entity';
 import { Enzyme } from '@/domain/models/enzyme.entity';
+import { CreateSaveResultExperimentDto } from '@/presentation/dtos/experiment/create-save-result-experiment-dto';
 
 @Injectable()
 export class ResultExperimentService {
@@ -15,16 +16,19 @@ export class ResultExperimentService {
     private readonly resultExperimentRepository: ResultExperimentRepository,
   ) {}
 
-  async create(results: number[], average: number, process: Process, enzyme: Enzyme, experiment: Experiment): Promise<ResultExperiment> {
+  async create(data: CreateSaveResultExperimentDto): Promise<ResultExperiment> {
     this.logger.debug('create');
 
     try {
       const resultExperiment = this.resultExperimentRepository.create({
-        experiment,
-        process,
-        enzyme,
-        results,
-        average,
+        experiment: data.experiment,
+        process: data.process,
+        enzyme: data.enzyme,
+        result: data.result,
+        sample: data.sample,
+        whiteSample: data.whiteSample,
+        differenceBetweenSamples: data.differenceBetweenSamples,
+        curve: data.curve
       });
 
       const save = await this.resultExperimentRepository.save(resultExperiment);
@@ -54,7 +58,7 @@ export class ResultExperimentService {
       where: {
         experiment
       },
-      relations: ['process', 'enzyme', 'experiment', 'experiment.experimentEnzymes']
+      relations: ['process', 'enzyme', 'experiment']
     });
   }
 

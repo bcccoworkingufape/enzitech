@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+/* eslint-disable array-callback-return */
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExperimentRepository } from '@/infrastructure/database/repositories/experiment.repository';
@@ -17,6 +19,7 @@ import { ResultExperimentService } from './result-experiment.service';
 import { EnzymeService } from './enzyme.service';
 import { VerifyEnzymeDto } from '@/presentation/dtos/experiment/verify-enzyme.dto';
 import { EnzymeType } from '@/presentation/dtos/enzyme/enums/enzyme-type.enum';
+import { IResultExperiment } from '@/presentation/dtos/experiment/interfaces/result-expriment.interface';
 
 @Injectable()
 export class ExperimentService {
@@ -229,39 +232,129 @@ export class ExperimentService {
       const experiment = await this.experimentRepository.findOneOrFail(experimentId);
       const listResultsExperiment = await this.resultExperimentService.listResultsExperiment(experiment);
 
-      const results: any[] = [];
+      let repetitionId = 0;
+      const result: IResultExperiment[] = [];
 
       if (listResultsExperiment?.length) {
         await Promise.all(listResultsExperiment.map(
           async (resultExperiment) => {
-            const experimentEnzyme = await this.experimentEnzymeService.find(experimentId, resultExperiment.enzyme.id);
+            const experimentEnzyme = await this.experimentEnzymeService.find(resultExperiment.experiment.id, resultExperiment.enzyme.id);
 
-            /**
-             * manipular tratamento x enzymas
-             */
-            
-            return results.push({
-              id: resultExperiment.id,
-              enzymeName: resultExperiment.enzyme.name,
-              processName: resultExperiment.process.name,
-              params: {
-                sample: resultExperiment.sample,
-                whiteSample: resultExperiment.whiteSample,
-                differenceBetweenSamples: resultExperiment.differenceBetweenSamples,
-                variableB: resultExperiment.enzyme.variableB,
-                variableA: resultExperiment.enzyme.variableA,
-                curve: resultExperiment.curve,
-                weightGround: experimentEnzyme.weightGround,
-                duration: experimentEnzyme.duration,
-                size: experimentEnzyme.size,
-                weightSample: experimentEnzyme.weightSample
+            const enzymeFind = result.find((result) => {
+              if (resultExperiment.enzyme.id === result.enzyme.id) {
+                return result;
               }
             });
+
+            if (enzymeFind) {
+              const processFind = enzymeFind.processes.find((result) => {
+                if (resultExperiment.process.id === result.process.id) {
+                  return result;
+                }
+              });
+
+              if (processFind) {
+                const resultFind = processFind.results.find((result) => {
+                  if (resultExperiment.id === result.id) {
+                    return result;
+                  }
+                });
+
+                if (!resultFind) {
+                  processFind.results.push({
+                    id: resultExperiment.id,
+                    repetitionId,
+                    sample: resultExperiment.sample,
+                    whiteSample: resultExperiment.whiteSample,
+                    differenceBetweenSamples: resultExperiment.differenceBetweenSamples,
+                    variableA: resultExperiment.enzyme.variableA,
+                    variableB: resultExperiment.enzyme.variableB,
+                    curve: resultExperiment.curve,
+                    correctionFactor: experimentEnzyme.weightGround,
+                    time: experimentEnzyme.duration,
+                    volume: experimentEnzyme.size,
+                    weightSample: experimentEnzyme.weightSample,
+                    result: resultExperiment.result
+                  });
+                }
+              } else {
+                enzymeFind.processes.push({
+                  process: {
+                    id: resultExperiment.process.id,
+                    name: resultExperiment.process.name,
+                    description: resultExperiment.process.description
+                  },
+                  results: [{
+                    id: resultExperiment.id,
+                    repetitionId,
+                    sample: resultExperiment.sample,
+                    whiteSample: resultExperiment.whiteSample,
+                    differenceBetweenSamples: resultExperiment.differenceBetweenSamples,
+                    variableA: resultExperiment.enzyme.variableA,
+                    variableB: resultExperiment.enzyme.variableB,
+                    curve: resultExperiment.curve,
+                    correctionFactor: experimentEnzyme.weightGround,
+                    time: experimentEnzyme.duration,
+                    volume: experimentEnzyme.size,
+                    weightSample: experimentEnzyme.weightSample,
+                    result: resultExperiment.result
+                  }]
+                });
+              }
+            } else {
+              return result.push({
+                enzyme: {
+                  id: experimentEnzyme.enzyme.id,
+                  name: experimentEnzyme.enzyme.name,
+                  type: experimentEnzyme.enzyme.type,
+                  formula: experimentEnzyme.enzyme.formula,
+                  variableA: experimentEnzyme.enzyme.variableA,
+                  variableB: experimentEnzyme.enzyme.variableB,
+                  duration: experimentEnzyme.duration,
+                  weightSample: experimentEnzyme.weightSample,
+                  weightGround: experimentEnzyme.weightGround,
+                  size: experimentEnzyme.size,
+                },
+                processes: [{
+                  process: {
+                    id: resultExperiment.process.id,
+                    name: resultExperiment.process.name,
+                    description: resultExperiment.process.description
+                  },
+                  results: [{
+                    id: resultExperiment.id,
+                    repetitionId,
+                    sample: resultExperiment.sample,
+                    whiteSample: resultExperiment.whiteSample,
+                    differenceBetweenSamples: resultExperiment.differenceBetweenSamples,
+                    variableA: resultExperiment.enzyme.variableA,
+                    variableB: resultExperiment.enzyme.variableB,
+                    curve: resultExperiment.curve,
+                    correctionFactor: experimentEnzyme.weightGround,
+                    time: experimentEnzyme.duration,
+                    volume: experimentEnzyme.size,
+                    weightSample: experimentEnzyme.weightSample,
+                    result: resultExperiment.result
+                  }]
+                }]
+              });
+            }
           }
         ));
       }
 
-      return { results };
+      await Promise.all(
+        result.map((result) => {
+          result.processes.map((resultProcesses) => {
+            resultProcesses.results.map((processResults) => {
+              repetitionId += 1;
+              processResults.repetitionId = repetitionId;
+            });
+          });
+        }
+      ));
+
+      return { result };
     } catch (err) {
       throw new BadRequestException(err.message ?? 'Erro ao buscar o resultado do experimento');
     }

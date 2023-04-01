@@ -7,17 +7,18 @@ import { ExperimentDto } from '@/presentation/dtos/experiment/experiment.dto';
 export class ExperimentRepository extends Repository<Experiment> {
 
   async list(param: ListExperimentsParam): Promise<{ experiments: Experiment[]; count: number }> {
-    let query = await this.createQueryBuilder('experiments')
-    .where('experiments.user.id = :userId', { userId: param.userId });
+    const query = this
+      .createQueryBuilder('experiments')
+      .where('experiments.user.id = :userId', { userId: param.userId });
 
     if (param.finished) {
-      query = query.where(`experiments."finishedAt" IS NOT NULL`);
+      query.andWhere(`experiments."finishedAt" IS NOT NULL`);
     } else {
-      query = query.where(`experiments."finishedAt" IS NULL`);
+      query.andWhere(`experiments."finishedAt" IS NULL`);
     }
 
     if (param.orderBy) {
-      query = query.orderBy(`experiments.${param.orderBy}`, param.ordering);
+      query.orderBy(`experiments.${param.orderBy}`, param.ordering);
     }
 
     const [experiments, count] = await query

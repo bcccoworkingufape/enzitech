@@ -41,7 +41,7 @@ export class ExperimentService {
 
     try {
       const user = await this.userService.get(userId);
-      const processes = await this.processService.findByIds(data.processes);
+      const processes = await this.processService.findByIds(data.processes, user.id);
       const experiment = this.experimentRepository.create({
         name: data.name,
         description: data.description,
@@ -122,15 +122,16 @@ export class ExperimentService {
     }
   }
 
-  async verifyEnzymes(data: VerifyEnzymeDto, experimentId: string): Promise<any> {
+  async verifyEnzymes(data: VerifyEnzymeDto, experimentId: string, userId: string): Promise<any> {
     this.logger.debug('get');
 
     try {
       const enzymes: any[] = [];
       
-      const experiment = await this.experimentRepository.findOneOrFail(experimentId);
-      const process = await this.processService.findById(data.process);
-      const result = await this.experimentRepository.findExperimentByIdAndProcessId(experimentId, process.id);
+      const user = await this.userService.get(userId);
+      const process = await this.processService.findByIdAndUserId(data.process, user.id);
+      const experiment = await this.experimentRepository.findOneOrFail(experimentId, { where: { user: { id: user.id } } });
+      const result = await this.experimentRepository.findExperimentByIdAndProcessId(experiment.id, process.id);
 
       await Promise.all(result.experimentEnzymes.map(async (experimentEnzyme: any) => {
         const enzyme = await this.resultExperimentService.findResultExperiment(process, experimentEnzyme.enzyme.id, experiment);
@@ -157,14 +158,15 @@ export class ExperimentService {
     }
   }
 
-  async saveResult(data: SaveResultExperimentDto, experimentId: string): Promise<any> {
+  async saveResult(data: SaveResultExperimentDto, experimentId: string, userId: string): Promise<any> {
     this.logger.debug('create');
 
     try {
-      const process = await this.processService.findById(data.process);
+      const user = await this.userService.get(userId);
+      const process = await this.processService.findByIdAndUserId(data.process, user.id);
       const enzyme = await this.enzymeService.findById(data.enzyme);
-      const experiment = await this.experimentRepository.findOneOrFail(experimentId);
-      const experimentEnzyme = await this.experimentEnzymeService.find(experimentId, enzyme.id);
+      const experiment = await this.experimentRepository.findOneOrFail(experimentId, { where: { user: { id: user.id } } });
+      const experimentEnzyme = await this.experimentEnzymeService.find(experiment.id, enzyme.id);
 
       await Promise.all(data.experimentData.map(async (experimentData) => {
         let result = 0;
@@ -203,7 +205,7 @@ export class ExperimentService {
         });
       }));
 
-      const getExperiment = await this.experimentRepository.findExperimentById(experimentId);
+      const getExperiment = await this.experimentRepository.findExperimentById(experiment.id);
       const totalEnzymesCalculateResultSave = await this.resultExperimentService.countResultExperiment(experiment);
       const totalEnzymeExperiment = getExperiment.experimentEnzymes.length;
       const totalProcessesExperiment = getExperiment.processes.length;
@@ -217,7 +219,7 @@ export class ExperimentService {
 
       await this.experimentRepository.save(experiment);
 
-      const experimentUpdated = await this.experimentRepository.findExperimentById(experimentId);
+      const experimentUpdated = await this.experimentRepository.findExperimentById(experiment.id);
 
       return new ExperimentDto(experimentUpdated, experimentUpdated.experimentEnzymes, experimentUpdated.processes);
     } catch (err) {
@@ -225,11 +227,12 @@ export class ExperimentService {
     }
   }
 
-  async getTotalResultSave(experimentId: string): Promise<any> {
+  async getTotalResultSave(experimentId: string, userId: string): Promise<any> {
     this.logger.debug('get');
     
     try {
-      const experiment = await this.experimentRepository.findOneOrFail(experimentId);
+      const user = await this.userService.get(userId);
+      const experiment = await this.experimentRepository.findOneOrFail(experimentId, { where: { user: { id: user.id } } });
       const listResultsExperiment = await this.resultExperimentService.listResultsExperiment(experiment);
 
       let repetitionId = 0;

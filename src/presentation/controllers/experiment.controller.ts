@@ -88,9 +88,10 @@ export class ExperimentController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async saveResult(
     @Body() body: SaveResultExperimentDto,
-    @Param('experiment') experimentId: string
+    @Param('experiment') experimentId: string,
+    @Req() request: { request: Request; user: SessionInfo }
     ): Promise<any> {
-    return this.experimentService.saveResult(body, experimentId);
+    return this.experimentService.saveResult(body, experimentId, request.user.id);
   }
 
   @Get('get-total-result/:experiment')
@@ -101,8 +102,9 @@ export class ExperimentController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getTotalResult(
     @Param('experiment') experimentId: string,
+    @Req() request: { request: Request; user: SessionInfo }
     ): Promise<any> {
-    return this.experimentService.getTotalResultSave(experimentId);
+    return this.experimentService.getTotalResultSave(experimentId, request.user.id);
   }
 
   @Post('get-enzymes/:experiment')
@@ -113,9 +115,10 @@ export class ExperimentController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getEnzymes(
     @Param('experiment') experimentId: string,
-    @Body() body: VerifyEnzymeDto
+    @Body() body: VerifyEnzymeDto,
+    @Req() request: { request: Request; user: SessionInfo }
     ): Promise<any> {
-    return this.experimentService.verifyEnzymes(body, experimentId);
+    return this.experimentService.verifyEnzymes(body, experimentId, request.user.id);
   }
 
   @Get()

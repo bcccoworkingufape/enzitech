@@ -1,6 +1,8 @@
 export enum EnzymeType {
-  Betaglucosidase = 'Betaglucosidase',
-  Aryl = 'Aryl',
   FosfataseAcida = 'FosfataseAcida',
   FosfataseAlcalina = 'FosfataseAlcalina',
+  Betaglucosidase = 'Betaglucosidase',
+  Aryl = 'Aryl',
+  Urease = 'Urease',
+  FDA = 'FDA',
 }

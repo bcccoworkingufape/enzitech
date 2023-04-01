@@ -7,16 +7,18 @@ import { ExperimentService } from '@/aplication/use-cases/experiment.service';
 import { ExperimentRepository } from '../database/repositories/experiment.repository';
 import { ExperimentEnzymeService } from '@/aplication/use-cases/experiment-enzyme.service';
 import { ExperimentEnzymeRepository } from '../database/repositories/experiment-enzyme.repository';
+import { CalculateExperimentService } from '@/aplication/use-cases/calculate-experiment.service';
+import { ResultExperimentService } from '@/aplication/use-cases/result-experiment.service';
+import { ResultExperimentRepository } from '../database/repositories/result-experiment.repository';
 import { EnzymeModule } from './enzyme.module';
 import { ProcessModule } from './process.module';
-import { CalculateExperimentService } from '@/aplication/use-cases/calculate-experiment.service';
-
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ExperimentRepository,
       ExperimentEnzymeRepository,
+      ResultExperimentRepository,
     ]),
     DatabaseModule,
     UserModule,
@@ -24,7 +26,7 @@ import { CalculateExperimentService } from '@/aplication/use-cases/calculate-exp
     ProcessModule,
   ],
   controllers: [ExperimentController],
-  providers: [ExperimentService, ExperimentEnzymeService, CalculateExperimentService],
+  providers: [ExperimentService, ExperimentEnzymeService, ResultExperimentService, CalculateExperimentService],
   exports: [ExperimentService, CalculateExperimentService],
 })
 export class ExperimentModule {}

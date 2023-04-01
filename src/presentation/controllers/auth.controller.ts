@@ -39,7 +39,7 @@ export class AuthController {
   }
 
   @ApiBody({
-    description: 'Payload containing the user password and confirm passowrd.',
+    description: 'Payload containing the user password and confirm password.',
     type: ChangePasswordDto,
   })
   @ApiResponse({

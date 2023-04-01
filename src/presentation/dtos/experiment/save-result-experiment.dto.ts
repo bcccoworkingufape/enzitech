@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, plainToClass } from 'class-transformer';
 import { IsArray, IsString } from 'class-validator';
+import { CreateExperimentDataDto } from './create-experiment-data.dto';
 
 export class SaveResultExperimentDto {
   @ApiProperty({
@@ -24,15 +25,13 @@ export class SaveResultExperimentDto {
   readonly process: string;
 
   @ApiProperty({
-    type: [Number],
-    description: 'Data to save result',
+    type: [CreateExperimentDataDto],
+    description: 'Data to calculate the result of experiment',
     required: true,
   })
   @IsArray()
   @Expose()
-  readonly results: number[];
-
-
+  readonly experimentData: CreateExperimentDataDto[];
 
   constructor(obj: SaveResultExperimentDto) {
     Object.assign(this, plainToClass(SaveResultExperimentDto, obj, { excludeExtraneousValues: true }));

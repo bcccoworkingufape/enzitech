@@ -4,10 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { IsDecimal } from 'class-validator';
 import { Enzyme } from './enzyme.entity';
 import { Experiment } from './experiment.entity';
 import { Process } from './process.entity';
@@ -18,20 +19,42 @@ export class ResultExperiment {
   @Expose()
   id: string;
 
-  @OneToOne(() => Process, { primary: true, cascade: true })
+  @ManyToOne(() => Process, { primary: true, cascade: true })
   @JoinColumn({ name: 'processId' })
   process: Process;
 
-  @OneToOne(() => Enzyme, { primary: true, cascade: true })
+  @ManyToOne(() => Enzyme, { primary: true, cascade: true })
   @JoinColumn({ name: 'enzymeId' })
   enzyme: Enzyme;
 
-  @OneToOne(() => Experiment, { primary: true, cascade: true })
+  @ManyToOne(() => Experiment, { primary: true, cascade: true })
   @JoinColumn({ name: 'experimentId' })
   experiment: Experiment;
 
-  @Column("int", { array: true, default: [] })
-  results: number[];
+  @Column('decimal')
+  @IsDecimal()
+  @Expose()
+  result: number;
+
+  @Column('decimal')
+  @IsDecimal()
+  @Expose()
+  sample: number;
+
+  @Column('decimal')
+  @IsDecimal()
+  @Expose()
+  whiteSample: number;
+
+  @Column({ type: 'decimal' })
+  @IsDecimal()
+  @Expose()
+  differenceBetweenSamples: number;
+
+  @Column('decimal')
+  @IsDecimal()
+  @Expose()
+  curve: number;
 
   @CreateDateColumn({ name: 'createdAt' })
   @Expose()
@@ -40,7 +63,6 @@ export class ResultExperiment {
   @UpdateDateColumn({ name: 'updatedAt' })
   @Expose()
   updatedAt: Date;
-
 
   constructor(resultExperiment: ResultExperiment) {
     Object.assign(this, plainToClass(ResultExperiment, resultExperiment, { excludeExtraneousValues: true }));

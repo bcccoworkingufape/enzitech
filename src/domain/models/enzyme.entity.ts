@@ -40,6 +40,11 @@ export class Enzyme {
   @OneToMany(() => ExperimentEnzyme, experimentEnzyme => experimentEnzyme.enzyme)
   experimentEnzymes: ExperimentEnzyme[];
 
+  @Column({ type: 'varchar'})
+  @IsString()
+  @Expose()
+  formula: string;
+
   @CreateDateColumn({ name: 'createdAt' })
   @Expose()
   createdAt: Date;

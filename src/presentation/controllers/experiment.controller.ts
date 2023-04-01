@@ -3,11 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
   HttpStatus,
   Param,
   Post,
-  Put,
   Query,
   Req,
   UseGuards,
@@ -23,10 +21,6 @@ import { Request } from 'express';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../infrastructure/security/guards/jwt-auth.guard';
 import { RolesGuard } from '../../infrastructure/security/guards/roles.guard';
-import { UserDto } from '../dtos/user/user.dto';
-import { ProcessService } from '@/aplication/use-cases/process.service';
-import { CreateProcessDto } from '../dtos/process/create-process.dto';
-import { Process } from '@/domain/models/process.entity';
 import { CreateExperimentDto } from '../dtos/experiment/create-experiment.dto';
 import { Experiment } from '@/domain/models/experiment.entity';
 import { ExperimentService } from '@/aplication/use-cases/experiment.service';
@@ -37,7 +31,8 @@ import { BaseExperimentDto } from '../dtos/experiment/base-experiment.dto';
 import { ExperimentDto } from '../dtos/experiment/experiment.dto';
 import { CalculateExperimentEnzymeDto } from '../dtos/experiment/calculate-experiment-calculation.dto';
 import { ResultExperimentEnzymeProcessCalculateDto } from '../dtos/experiment/result-experiment-enzyme-process-calculation.dto';
-import { SaveResultExperimentDto } from '../dtos/experiment/save-result.dto';
+import { SaveResultExperimentDto } from '../dtos/experiment/save-result-experiment.dto';
+import { VerifyEnzymeDto } from '../dtos/experiment/verify-enzyme.dto';
 
 @ApiTags('experiments')
 @ApiBearerAuth()
@@ -62,7 +57,6 @@ export class ExperimentController {
     ): Promise<BaseExperimentDto> {
     return this.experimentService.create(body, request.user.id);
   }
-
   
   @Post('calculate/:experiment')
   @ApiBody({
@@ -93,16 +87,41 @@ export class ExperimentController {
   @Roles('Admin', 'User')
   @UseGuards(JwtAuthGuard, RolesGuard)
   async saveResult(
-    @Body() body: CalculateExperimentEnzymeDto,
+    @Body() body: SaveResultExperimentDto,
     @Param('experiment') experimentId: string
-    ): Promise<ResultExperimentEnzymeProcessCalculateDto> {
-    return this.experimentService.calculate(body, experimentId);
+    ): Promise<any> {
+    return this.experimentService.saveResult(body, experimentId);
+  }
+
+  @Get('get-total-result/:experiment')
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
+  @Roles('Admin', 'User')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getTotalResult(
+    @Param('experiment') experimentId: string,
+    ): Promise<any> {
+    return this.experimentService.getTotalResultSave(experimentId);
+  }
+
+  @Post('get-enzymes/:experiment')
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
+  @Roles('Admin', 'User')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getEnzymes(
+    @Param('experiment') experimentId: string,
+    @Body() body: VerifyEnzymeDto
+    ): Promise<any> {
+    return this.experimentService.verifyEnzymes(body, experimentId);
   }
 
   @Get()
   @ApiResponse({
     type: ListExperimentDto,
-    status: HttpStatus.CREATED,
+    status: HttpStatus.OK,
   })
   @Roles('Admin', 'User')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -113,11 +132,10 @@ export class ExperimentController {
     return this.experimentService.list(filter, request.user.id);
   }
 
-
   @Get(':id')
   @ApiResponse({
     type: ExperimentDto,
-    status: HttpStatus.CREATED,
+    status: HttpStatus.OK,
   })
   @Roles('Admin', 'User')
   @UseGuards(JwtAuthGuard, RolesGuard)

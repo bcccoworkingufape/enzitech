@@ -23,15 +23,14 @@ export class ExperimentDto extends BaseExperimentDto {
   @Expose()
   readonly enzymes: ExperimentEnzymeDto[];
 
-
   constructor(obj: any, experimentEnzymes: ExperimentEnzyme[], processes: Process[]) {
     super(obj);
     this.enzymes = experimentEnzymes.map(experimentEnzyme => new ExperimentEnzymeDto({
       ...experimentEnzyme,
+      id: experimentEnzyme.enzyme.id,
       name: experimentEnzyme.enzyme.name,
       type: experimentEnzyme.enzyme.type,
-      id: experimentEnzyme. enzyme.id
-
+      formula: experimentEnzyme.enzyme.formula,
     }));
     this.processes = processes.map(process => new ProcessDto({...process}));
   }

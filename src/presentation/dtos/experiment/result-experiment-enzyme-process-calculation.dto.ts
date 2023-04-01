@@ -23,7 +23,6 @@ export class ResultExperimentEnzymeProcessCalculateDto {
   @Expose()
   readonly average: number;
 
-
   constructor(obj: ResultExperimentEnzymeProcessCalculateDto) {
     Object.assign(this, plainToClass(ResultExperimentEnzymeProcessCalculateDto, obj, { excludeExtraneousValues: true }));
   }

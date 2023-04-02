@@ -33,12 +33,20 @@ export class ProcessService extends TypeOrmQueryService<Process>{
     }
   }
 
-  async findByIds(ids: string[]): Promise<Process[]> {
-    try {
-      return this.processRepository.findByIds(ids);
-    } catch(err) {
-      throw new BadRequestException('Erro ao pesquisar Tratamentos');
-    }
+  async findByIds(ids: string[], userId: string): Promise<Process[]> {
+      const processes = await this.processRepository.findByIds(ids, { 
+        where: { 
+          user: { 
+            id: userId  
+          }
+        } 
+      });
+
+      if (!processes.length) {
+        throw new BadRequestException('Erro ao pesquisar Tratamentos');
+      }
+
+      return processes;
   }
 
   async findByUser(userId: string): Promise<Process[]> {
@@ -59,11 +67,14 @@ export class ProcessService extends TypeOrmQueryService<Process>{
     return !!(await this.processRepository.softDelete(id)).affected;
   }
 
-  async findById(id: string): Promise<Process> {
+  async findByIdAndUserId(id: string, userId: string): Promise<Process> {
     try {
       return await this.processRepository.findOneOrFail({
         where: { 
-          id
+          id,
+          user: {
+            id: userId
+          }
         },
       });
 

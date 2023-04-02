@@ -53,17 +53,15 @@ export class ExperimentEnzymeService {
   async find(experiment: string, enzyme: string): Promise<ExperimentEnzyme> {
     this.logger.debug('get');
     
-    const experimentEnzyme = await this.experimentEnzymeRepository.findOne({
-      where: {
-        experiment,
-        enzyme
-      }
-    });
-
-    if(!experimentEnzyme){
+    try {
+      return this.experimentEnzymeRepository.findOneOrFail({
+        where: {
+          experiment,
+          enzyme
+        }
+      });
+    } catch (error) {
       throw new BadRequestException('Experiment Enzyme not found');
     }
-
-    return experimentEnzyme;
   }
 }

@@ -264,9 +264,7 @@ export class ExperimentService {
                 });
 
                 if (!resultFind) {
-                  repetitionId += 1;
-
-                  return processFind.results.push({
+                  processFind.results.push({
                     id: resultExperiment.id,
                     repetitionId,
                     sample: resultExperiment.sample,
@@ -283,9 +281,7 @@ export class ExperimentService {
                   });
                 }
               } else {
-                repetitionId += 1;
-
-                return enzymeFind.processes.push({
+                enzymeFind.processes.push({
                   process: {
                     id: resultExperiment.process.id,
                     name: resultExperiment.process.name,
@@ -309,9 +305,7 @@ export class ExperimentService {
                 });
               }
             } else {
-              repetitionId += 1;
-
-              return result.push({
+              result.push({
                 enzyme: {
                   id: experimentEnzyme.enzyme.id,
                   name: experimentEnzyme.enzyme.name,
@@ -351,6 +345,17 @@ export class ExperimentService {
           }
         ));
       }
+
+      await Promise.all(
+        result.map((result) => {
+          result.processes.map((resultProcesses) => {
+            resultProcesses.results.map((processResults) => {
+              repetitionId += 1;
+              processResults.repetitionId = repetitionId;
+            });
+          });
+        }
+      ));
 
       return { result };
     } catch (err) {

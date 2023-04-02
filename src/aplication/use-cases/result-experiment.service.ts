@@ -58,7 +58,8 @@ export class ResultExperimentService {
       where: {
         experiment
       },
-      relations: ['process', 'enzyme', 'experiment']
+      relations: ['process', 'enzyme', 'experiment'],
+      order: { createdAt: 'ASC' }
     });
   }
 

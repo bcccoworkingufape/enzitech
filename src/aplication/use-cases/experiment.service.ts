@@ -305,7 +305,7 @@ export class ExperimentService {
                 });
               }
             } else {
-              return result.push({
+              result.push({
                 enzyme: {
                   id: experimentEnzyme.enzyme.id,
                   name: experimentEnzyme.enzyme.name,

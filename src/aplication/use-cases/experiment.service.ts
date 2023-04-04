@@ -94,10 +94,18 @@ export class ExperimentService {
     }
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string): Promise<any> {
     this.logger.debug('delete');
 
-    return !!(await this.experimentRepository.delete(id)).affected;
+    try {
+      const result = (await this.experimentRepository.delete(id)).affected;
+
+      if (result === 0) {
+        throw new BadRequestException('O experimento não foi encontrado');
+      }
+    } catch (error) {
+      throw new BadRequestException('Não foi possivel excluir o experimento');
+    }
   }
 
   async calculate(data: CalculateExperimentEnzymeDto, experimentId: string): Promise<ResultExperimentEnzymeProcessCalculateDto> {
@@ -264,7 +272,7 @@ export class ExperimentService {
                 });
 
                 if (!resultFind) {
-                  processFind.results.push({
+                  return processFind.results.push({
                     id: resultExperiment.id,
                     repetitionId,
                     sample: resultExperiment.sample,
@@ -281,7 +289,7 @@ export class ExperimentService {
                   });
                 }
               } else {
-                enzymeFind.processes.push({
+                return enzymeFind.processes.push({
                   process: {
                     id: resultExperiment.process.id,
                     name: resultExperiment.process.name,
@@ -305,7 +313,7 @@ export class ExperimentService {
                 });
               }
             } else {
-              result.push({
+              return result.push({
                 enzyme: {
                   id: experimentEnzyme.enzyme.id,
                   name: experimentEnzyme.enzyme.name,

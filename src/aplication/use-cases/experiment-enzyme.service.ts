@@ -45,11 +45,6 @@ export class ExperimentEnzymeService {
     await Promise.all(calls);
   }
 
-  async delete(id: string): Promise<boolean> {
-    this.logger.debug('delete');
-    return !!(await this.experimentEnzymeRepository.delete(id)).affected;
-  }
-
   async find(experiment: string, enzyme: string): Promise<ExperimentEnzyme> {
     this.logger.debug('get');
     

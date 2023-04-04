@@ -17,7 +17,6 @@ export class ProcessService extends TypeOrmQueryService<Process>{
     private readonly userService: UserService, 
   ) {
     super(processRepository, { useSoftDelete: true });
-
   }
 
   async create(data: CreateProcessDto, userId: string): Promise<ProcessDto> {
@@ -56,15 +55,23 @@ export class ProcessService extends TypeOrmQueryService<Process>{
           user: { id: userId } 
         },
       });
-
     } catch(err) {
       throw new BadRequestException('Erro ao pesquisar Tratamentos');
     }
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string): Promise<any> {
     this.logger.debug('delete');
-    return !!(await this.processRepository.softDelete(id)).affected;
+
+    try {
+      const result = (await this.processRepository.delete(id)).affected;
+
+      if (result === 0) {
+        throw new BadRequestException('O tratamento não foi encontrado');
+      }
+    } catch (error) {
+      throw new BadRequestException('Não foi possivel excluir o tratamento');
+    }
   }
 
   async findByIdAndUserId(id: string, userId: string): Promise<Process> {

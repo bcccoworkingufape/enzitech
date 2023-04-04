@@ -272,7 +272,7 @@ export class ExperimentService {
                 });
 
                 if (!resultFind) {
-                  processFind.results.push({
+                  return processFind.results.push({
                     id: resultExperiment.id,
                     repetitionId,
                     sample: resultExperiment.sample,
@@ -289,7 +289,7 @@ export class ExperimentService {
                   });
                 }
               } else {
-                enzymeFind.processes.push({
+                return enzymeFind.processes.push({
                   process: {
                     id: resultExperiment.process.id,
                     name: resultExperiment.process.name,
@@ -313,7 +313,7 @@ export class ExperimentService {
                 });
               }
             } else {
-              result.push({
+              return result.push({
                 enzyme: {
                   id: experimentEnzyme.enzyme.id,
                   name: experimentEnzyme.enzyme.name,

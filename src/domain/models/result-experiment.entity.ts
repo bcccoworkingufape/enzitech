@@ -19,15 +19,15 @@ export class ResultExperiment {
   @Expose()
   id: string;
 
-  @ManyToOne(() => Process, { primary: true, cascade: true })
+  @ManyToOne(() => Process, { primary: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'processId' })
   process: Process;
 
-  @ManyToOne(() => Enzyme, { primary: true, cascade: true })
+  @ManyToOne(() => Enzyme, { primary: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'enzymeId' })
   enzyme: Enzyme;
 
-  @ManyToOne(() => Experiment, { primary: true, cascade: true })
+  @ManyToOne(() => Experiment, { primary: true, onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   @JoinColumn({ name: 'experimentId' })
   experiment: Experiment;
 

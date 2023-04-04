@@ -81,7 +81,7 @@ export class ProcessController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async delete(
     @Param('id') id: string,
-  ): Promise<void> {
+  ): Promise<any> {
     await this.processService.delete(id);
   }
 }

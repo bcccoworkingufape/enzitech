@@ -94,10 +94,18 @@ export class ExperimentService {
     }
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string): Promise<any> {
     this.logger.debug('delete');
 
-    return !!(await this.experimentRepository.delete(id)).affected;
+    try {
+      const result = (await this.experimentRepository.delete(id)).affected;
+
+      if (result === 0) {
+        throw new BadRequestException('O experimento não foi encontrado');
+      }
+    } catch (error) {
+      throw new BadRequestException('Não foi possivel excluir o experimento');
+    }
   }
 
   async calculate(data: CalculateExperimentEnzymeDto, experimentId: string): Promise<ResultExperimentEnzymeProcessCalculateDto> {

@@ -71,7 +71,8 @@ export class EnzymeController {
   })
   @Roles('Admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async delete( @Param('id') id: string ): Promise<void> {
+  async delete( 
+    @Param('id') id: string ): Promise<any> {
     await this.enzymeService.delete(id);
   }
 }
